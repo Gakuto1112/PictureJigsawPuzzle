@@ -1,5 +1,30 @@
 body {
+	margin: 0;
 	background-image: linear-gradient(aliceblue 2px, transparent 2px), linear-gradient(90deg, aliceblue 2px, transparent 2px);
 	background-size: 80px 80px;
 	background-position: 0px 0px;
+}
+#header {
+	position: relative;
+	width: 100%;
+	height: 60px;
+	background-color: #bbffff;
+}
+#header > h1 {
+	position: absolute;
+	margin: 0;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+#header::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 100%;
+	height: 20px;
+	top: 100%;
+	left: 0;
+	background: linear-gradient(#00000020, transparent);
+	z-index: 0;
 }
