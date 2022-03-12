@@ -3,12 +3,19 @@
 	<head>
 		<meta charset="utf-8">
 		<title>ピクチャージグソーパズル</title>
-		<script src="PictureJigsawPuzzle.js"></script>
+		<script defer src="PictureJigsawPuzzle.js"></script>
 		<link rel="stylesheet" href="PictureJigsawPuzzle.css">
 	</head>
 	<body>
 		<div id="header">
 			<h1>ピクチャージグソーパズル</h1>
+		</div>
+		<div id="main_area">
+			<div class="button" onclick="selectImage()">画像の選択</div>
+			<div id="puzzle_area" class="hidden">
+				<img id="puzzle_image" class="puzzle_preview_image_area puzzle_frame">
+				<canvas id="puzzle_divide_canvas" class="puzzle_preview_image_area"></canvas>
+			</div>
 		</div>
 	</body>
 </html>

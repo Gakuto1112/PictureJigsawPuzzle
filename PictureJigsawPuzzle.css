@@ -4,6 +4,9 @@ body {
 	background-size: 80px 80px;
 	background-position: 0px 0px;
 }
+.hidden {
+	display: none;
+}
 #header {
 	position: relative;
 	width: 100%;
@@ -27,4 +30,42 @@ body {
 	left: 0;
 	background: linear-gradient(#00000020, transparent);
 	z-index: 0;
+}
+#main_area {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.button {
+	padding: 10px 30px;
+	color: white;
+	font-size: xx-large;
+	background-color: deepskyblue;
+	border: solid thick royalblue;
+	border-radius: 40px;
+	cursor: pointer;
+	transition: 0.3s;
+	user-select: none;
+}
+.button:hover {
+	background-color: #00a3da;
+	border-color: #2f4ba1;
+}
+.button:active {
+	transform: scale(95%);
+}
+#puzzle_area {
+	position: relative;
+	width: 824px;
+	height: 474px;
+	overflow: hidden;
+}
+.puzzle_frame {
+	border: ridge 12px wheat;
+}
+.puzzle_preview_image_area {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
