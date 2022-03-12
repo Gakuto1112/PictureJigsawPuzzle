@@ -1,0 +1,5 @@
+body {
+	background-image: linear-gradient(aliceblue 2px, transparent 2px), linear-gradient(90deg, aliceblue 2px, transparent 2px);
+	background-size: 80px 80px;
+	background-position: 0px 0px;
+}
