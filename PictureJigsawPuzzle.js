@@ -2,12 +2,13 @@ const puzzleImage = new Image(); //パズルに使用する画像を保持する
 puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
+	const puzzleBackground = document.getElementById("puzzle_background");
 	const imageRatio = puzzleImage.naturalWidth / puzzleImage.naturalHeight;
 	const puzzleArea = document.getElementById("puzzle_area");
 	puzzleImageElement.src = puzzleImage.src;
 	puzzleArea.style.width = "824px";
 	puzzleArea.style.height = "474px";
-	puzzleArea.classList.remove("puzzle_frame", "puzzle_area_empty");
+	puzzleArea.classList.remove("puzzle_frame");
 	puzzleDivideCanvas.classList.add("puzzle_frame");
 	document.getElementById("puzzle_empty_text").classList.add("hidden");
 	if(imageRatio >= 16 / 9) {
@@ -22,6 +23,8 @@ puzzleImage.addEventListener("load", () => {
 		puzzleDivideCanvas.width = 450 * imageRatio;
 		puzzleDivideCanvas.height = 450;
 	}
+	puzzleBackground.style.width = puzzleDivideCanvas.width + "px";
+	puzzleBackground.style.height = puzzleDivideCanvas.height + "px";
 	document.getElementById("cannot_start_message").children.item(0).classList.add("hidden");
 	const column = document.getElementById("puzzle_column_division");
 	const row = document.getElementById("puzzle_row_division");
@@ -35,7 +38,18 @@ function swapClass(element, classOut, classIn) {
 	element.classList.add(classIn);
 }
 
-function fadeOutElement(element, transition) {
+function fadeInElement(element, transition, callback) {
+	//要素をフェードインさせる。トランジションは秒。
+	element.style.animationDuration = transition + "s";
+	element.classList.add("fade_in");
+	element.classList.remove("hidden");
+	element.addEventListener("animationend", () => {
+		element.classList.remove("fade_in");
+		if(typeof callback == "function") callback();
+	}, { once: true });
+}
+
+function fadeOutElement(element, transition, callback) {
 	//要素をフェードアウトさせる。トランジションは秒。
 	element.style.transition = "opacity " + transition + "s";
 	element.style.opacity = 0;
@@ -43,6 +57,7 @@ function fadeOutElement(element, transition) {
 		element.style.transition = "";
 		element.style.opacity = 1;
 		element.classList.add("hidden");
+		if(typeof callback == "function") callback();
 	}, { once: true });
 }
 
@@ -54,7 +69,7 @@ function selectImage(clickElement) {
 		fileInput.accept = "image/*";
 		fileInput.addEventListener("change", (event) => {
 			const acceptFileType = ["png", "jpg", "jpeg"];
-			if(acceptFileType.indexOf(fileInput.value.split(".").slice(-1)[0]) >= 0) {
+			if(acceptFileType.indexOf(fileInput.value.split(".").slice(-1)[0].toLowerCase()) >= 0) {
 				//ファイルの形式が正しい場合の処理
 				const reader = new FileReader();
 				reader.addEventListener("load", (event) => {
@@ -148,40 +163,82 @@ function start(clickElement) {
 		swapClass(document.getElementById("header"), "header_blue", "header_green");
 		fadeOutElement(document.getElementById("puzzle_division_settings"), 1.5);
 		fadeOutElement(document.getElementById("puzzle_piece_count"), 1.5);
-		fadeOutElement(clickElement, 1.5);
 		fadeOutElement(document.getElementById("cannot_start_message"), 1.5);
-		clickElement.addEventListener("transitionend", () => {
-			//画像の分割
-			const puzzleImageCanvas = document.getElementById("puzzle_divide_canvas");
-			const column = document.getElementById("puzzle_column_division").value;
-			const row = document.getElementById("puzzle_row_division").value;	
-			const puzzlePieceArea = document.getElementById("puzzle_piece_area");
-			let puzzlePieceFadeoutCount = 0;
-			puzzlePieceArea.style.gridTemplateColumns = "repeat(" + column + ", 1fr)";
-			puzzlePieceArea.style.gridTemplateRows = "repeat(" + row + ", 1fr)";
-			document.getElementById("puzzle_area").classList.add("puzzle_area_empty");
-			for(let i = 0; i < row; i++) {
-				for(let j = 0; j < column; j++) {
-					const puzzlePiece = document.createElement("CANVAS");
-					const context = puzzlePiece.getContext("2d");
-					puzzlePiece.setAttribute("data-piece-column", j);
-					puzzlePiece.setAttribute("data-piece-row", i);
-					puzzlePiece.width = puzzleImageCanvas.width / column;
-					puzzlePiece.height = puzzleImageCanvas.height / row;
-					context.drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzleImageCanvas.width / column, puzzleImageCanvas.height / row);
-					puzzlePieceArea.appendChild(puzzlePiece);
+		fadeOutElement(clickElement, 1.5, () => {
+			const pieceSelectArea = document.getElementById("piece_select_area");
+			pieceSelectArea.classList.add("piece_select_area_slide_in");
+			pieceSelectArea.classList.remove("hidden");
+			pieceSelectArea.addEventListener("animationend", () => {
+				pieceSelectArea.classList.remove("piece_select_area_slide_in");
+				//画像の分割
+				const puzzleImageCanvas = document.getElementById("puzzle_divide_canvas");
+				const column = document.getElementById("puzzle_column_division").value;
+				const row = document.getElementById("puzzle_row_division").value;	
+				const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+				const pieceArray = [];
+				let puzzlePieceFadeOutCount = 0;
+				let puzzlePieceFadeInCount = 0;
+				puzzlePieceArea.style.gridTemplateColumns = "repeat(" + column + ", 1fr)";
+				puzzlePieceArea.style.gridTemplateRows = "repeat(" + row + ", 1fr)";
+				for(let i = 0; i < row; i++) {
+					for(let j = 0; j < column; j++) {
+						const puzzlePiece = document.createElement("CANVAS");
+						puzzlePiece.setAttribute("data-piece-column", j);
+						puzzlePiece.setAttribute("data-piece-row", i);
+						puzzlePiece.width = puzzleImageCanvas.width / column;
+						puzzlePiece.height = puzzleImageCanvas.height / row;
+						puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzleImageCanvas.width / column, puzzleImageCanvas.height / row);
+						puzzlePieceArea.appendChild(puzzlePiece);
+						const puzzlePieceClone = document.createElement("CANVAS");
+						puzzlePieceClone.classList.add("hidden");
+						puzzlePieceClone.setAttribute("data-piece-column", j);
+						puzzlePieceClone.setAttribute("data-piece-row", i);
+						puzzlePieceClone.width = puzzlePiece.width;
+						puzzlePieceClone.height = puzzlePiece.height;
+						puzzlePieceClone.getContext("2d").drawImage(puzzlePiece, 0, 0);
+						pieceArray.push(puzzlePieceClone);
+					}
 				}
-			}
-			document.getElementById("puzzle_image").classList.add("hidden");
-			const puzzlePieceFadeoutInterval = setInterval(() => {
-				puzzlePieceArea.children.item(puzzlePieceFadeoutCount).classList.add("puzzle_piece_fadeout");
-				puzzlePieceArea.children.item(puzzlePieceFadeoutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
-				if(puzzlePieceFadeoutCount < column * row -1) {
-					puzzlePieceFadeoutCount++;
+				
+				//ピースの並び替え
+				const randomPieceArray = [];
+				while(pieceArray.length > 0) {
+					const target = Math.floor(Math.random() * pieceArray.length);
+					randomPieceArray.push(pieceArray[target]);
+					pieceArray.splice(target, 1);
 				}
-				else clearInterval(puzzlePieceFadeoutInterval);
-			}, 3000 / (column * row));
-		}, { once: true });
+				randomPieceArray.forEach((piece) => pieceSelectArea.appendChild(piece));
+
+				//ピース消滅アニメーション
+				document.getElementById("puzzle_image").classList.add("hidden");
+				const puzzlePieceFadeOutInterval = setInterval(() => {
+					puzzlePieceArea.children.item(puzzlePieceFadeOutCount).classList.add("puzzle_piece_fade_out");
+					puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
+					if(puzzlePieceFadeOutCount < column * row - 1) puzzlePieceFadeOutCount++;
+					else {
+						puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", () => {
+							while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
+							setTimeout(() => {
+								//ピース出現アニメーション
+								const puzzlePieceFadeInInterval = setInterval(() => {
+									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
+									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
+									pieceSelectArea.scrollTo({ top: pieceSelectArea.scrollHeight, left: 0 });
+									if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
+									else {
+										setTimeout(() => {
+											pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
+										}, 1000);
+										clearInterval(puzzlePieceFadeInInterval);
+									}
+								}, 3000 / (column * row));
+							}, 1000);
+						}, { once: true });
+						clearInterval(puzzlePieceFadeOutInterval);
+					}
+				}, 3000 / (column * row));
+			}, { once: true });
+		});
 	}
 }
 

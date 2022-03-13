@@ -27,7 +27,18 @@ input[type="number"] {
 	font-size: xx-large;
 }
 .hidden {
-	display: none;
+	display: none !important;
+}
+.fade_in {
+	animation-name: fadeIn;
+}
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 .red_color {
 	color: red;
@@ -41,6 +52,7 @@ input[type="number"] {
 	width: 100%;
 	height: 60px;
 	transition: 1.5s;
+	box-shadow: 0px 0px 20px 10px #00000020;
 }
 #header > h1 {
 	position: absolute;
@@ -54,17 +66,6 @@ input[type="number"] {
 }
 .header_green {
 	background-color: #bbffbb;
-}
-#header::after {
-	content: "";
-	position: absolute;
-	display: block;
-	width: 100%;
-	height: 20px;
-	top: 100%;
-	left: 0;
-	background: linear-gradient(#00000020, transparent);
-	z-index: 0;
 }
 #main_area {
 	display: flex;
@@ -102,7 +103,6 @@ input[type="number"] {
 	position: relative;
 	width: 800px;
 	height: 450px;
-	overflow: hidden;
 	user-select: none;
 }
 .puzzle_area_image_select {
@@ -114,11 +114,13 @@ input[type="number"] {
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
-.puzzle_area_empty {
-	background-color: lightgray;
-}
 .puzzle_frame {
 	border: ridge 12px wheat;
+}
+#puzzle_background {
+	width: 800px;
+	height: 450px;
+	background-color: lightgray;
 }
 #puzzle_empty_text {
 	margin: 0;
@@ -128,10 +130,23 @@ input[type="number"] {
 #puzzle_piece_area {
 	display: grid;
 }
-.puzzle_piece_fadeout {
-	animation: puzzle-piece-fadeout 0.3s linear;
+.puzzle_piece_fade_in {
+	animation: puzzle-piece-fade-in 0.3s linear;;
 }
-@keyframes puzzle-piece-fadeout {
+@keyframes puzzle-piece-fade-in {
+	0% {
+		transform: scale(150%);
+		opacity: 0;
+	}
+	100% {
+		transform: scale(100%);
+		opacity: 1;
+	}
+}
+.puzzle_piece_fade_out {
+	animation: puzzle-piece-fade-out 0.3s linear;
+}
+@keyframes puzzle-piece-fade-out {
 	100% {
 		transform: scale(150%);
 		opacity: 0;
@@ -142,4 +157,34 @@ input[type="number"] {
 }
 label[for="puzzle_row_division"] {
 	margin-left: 50px;
+}
+#piece_select_area {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	width: 100%;
+	height: calc(100% - 634px);
+	min-height: 200px;
+	top: 100%;
+	transform: translateY(-100%);
+	background-color: #bbffbb;
+	box-shadow: 0px 0px 20px 10px #00000020;
+	overflow-y: scroll;
+}
+.piece_select_area_slide_in {
+	animation: piece-select-area-slide-in 1.5s ease-out;
+}
+@keyframes piece-select-area-slide-in {
+	0% {
+		transform: translateY(0%);
+	}
+	100% {
+		transform: translateY(-100%);
+	}
+}
+#piece_select_area > canvas {
+	height: max-content;
+	max-height: calc(100% - 40px);
+	margin: 10px 10px 10px 10px;
 }
