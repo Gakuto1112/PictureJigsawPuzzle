@@ -11,11 +11,26 @@
 			<h1>ピクチャージグソーパズル</h1>
 		</div>
 		<div id="main_area">
+			<p id="message_canvas_not_available">お使いのブラウザはキャンバス描画に対応していないため、ピクチャージグソーパズルを利用出来ません。</p>
 			<div id="puzzle_area" class="puzzle_frame puzzle_area_empty" onclick="selectImage()">
 				<p id="puzzle_empty_text">クリックして画像の選択</p>
 				<img id="puzzle_image">
 				<canvas id="puzzle_divide_canvas"></canvas>
 			</div>
+			<div id="puzzle_division_settings">
+				<label for="puzzle_column_division">縦のピース数</label>
+				<input id="puzzle_column_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
+				<label for="puzzle_row_division">横のピース数</label>
+				<input id="puzzle_row_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
+			</div>
+			<p>パズルピースの総数：<span id="piece_count">25</span>枚</p>
+			<div id="start" class="button button_blue button_disabled">スタート</div>
+			<ul id="cannot_start_message">
+				<li>画像を選択して下さい。</li>
+				<li class="red_color hidden">ピースの数が少な過ぎます。</li>
+				<li class="red_color hidden">縦のピース数が不正です。</li>
+				<li class="red_color hidden">横のピース数が不正です。</li>
+			</ul>
 		</div>
 	</body>
 </html>
