@@ -103,8 +103,10 @@ input[type="number"] {
 	width: 800px;
 	height: 450px;
 	overflow: hidden;
-	cursor: pointer;
 	user-select: none;
+}
+.puzzle_area_image_select {
+	cursor: pointer;
 }
 #puzzle_area > * {
 	position: absolute;
@@ -122,6 +124,18 @@ input[type="number"] {
 	margin: 0;
 	color: dimgray;
 	font-size: xx-large;
+}
+#puzzle_piece_area {
+	display: grid;
+}
+.puzzle_piece_fadeout {
+	animation: puzzle-piece-fadeout 0.3s linear;
+}
+@keyframes puzzle-piece-fadeout {
+	100% {
+		transform: scale(150%);
+		opacity: 0;
+	}
 }
 #puzzle_division_settings {
 	margin-top: 50px;

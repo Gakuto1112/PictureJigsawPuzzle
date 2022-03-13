@@ -12,9 +12,10 @@
 		</div>
 		<div id="main_area">
 			<p id="message_canvas_not_available">お使いのブラウザはキャンバス描画に対応していないため、ピクチャージグソーパズルを利用出来ません。</p>
-			<div id="puzzle_area" class="puzzle_frame puzzle_area_empty" onclick="selectImage()">
+			<div id="puzzle_area" class="puzzle_area_image_select puzzle_frame puzzle_area_empty" onclick="selectImage(this)">
 				<p id="puzzle_empty_text">クリックして画像の選択</p>
 				<img id="puzzle_image">
+				<div id="puzzle_piece_area"></div>
 				<canvas id="puzzle_divide_canvas"></canvas>
 			</div>
 			<div id="puzzle_division_settings">
