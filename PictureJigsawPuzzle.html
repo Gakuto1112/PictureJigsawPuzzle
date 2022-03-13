@@ -6,8 +6,8 @@
 		<script defer src="PictureJigsawPuzzle.js"></script>
 		<link rel="stylesheet" href="PictureJigsawPuzzle.css">
 	</head>
-	<body>
-		<div id="header">
+	<body class="background_blue">
+		<div id="header" class="header_blue">
 			<h1>ピクチャージグソーパズル</h1>
 		</div>
 		<div id="main_area">
@@ -23,8 +23,8 @@
 				<label for="puzzle_row_division">横のピース数</label>
 				<input id="puzzle_row_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
 			</div>
-			<p>パズルピースの総数：<span id="piece_count">25</span>枚</p>
-			<div id="start" class="button button_blue button_disabled">スタート</div>
+			<p id="puzzle_piece_count">パズルピースの総数：<span id="piece_count">25</span>枚</p>
+			<div id="start" class="button button_blue button_disabled" onclick="start(this);">スタート</div>
 			<ul id="cannot_start_message">
 				<li>画像を選択して下さい。</li>
 				<li class="red_color hidden">ピースの数が少な過ぎます。</li>

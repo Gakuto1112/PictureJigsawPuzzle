@@ -28,6 +28,23 @@ puzzleImage.addEventListener("load", () => {
 	startCheck();
 });
 
+function swapClass(element, classOut, classIn) {
+	//要素のクラスの入れ替え
+	element.classList.remove(classOut);
+	element.classList.add(classIn);
+}
+
+function fadeOutElement(element, transition) {
+	//要素をフェードアウトさせる。トランジションは秒。
+	element.style.transition = "opacity " + transition + "s";
+	element.style.opacity = 0;
+	element.addEventListener("transitionend", () => {
+		element.style.transition = "";
+		element.style.opacity = 1;
+		element.classList.add("hidden");
+	}, { once: true });
+}
+
 function selectImage() {
 	//画像選択ウィンドウを開けて、画像を選択し、画像を表示させる処理
 	const fileInput = document.createElement("INPUT");
@@ -35,7 +52,6 @@ function selectImage() {
 	fileInput.accept = "image/*";
 	fileInput.addEventListener("change", (event) => {
 		const acceptFileType = ["png", "jpg", "jpeg"];
-		console
 		if(acceptFileType.indexOf(fileInput.value.split(".").slice(-1)[0]) >= 0) {
 			//ファイルの形式が正しい場合の処理
 			const reader = new FileReader();
@@ -118,6 +134,21 @@ function startCheck() {
 	}
 }
 
+function start(buttonElement) {
+	//ゲーム開始
+	if(!buttonElement.classList.contains("button_disabled")) {
+		document.getElementById("puzzle_column_division").disabled = true;
+		document.getElementById("puzzle_row_division").disabled = true;
+		buttonElement.classList.add("button_disabled");
+		swapClass(document.body, "background_blue", "background_green");
+		swapClass(document.getElementById("header"), "header_blue", "header_green");
+		fadeOutElement(document.getElementById("puzzle_division_settings"), 1.5);
+		fadeOutElement(document.getElementById("puzzle_piece_count"), 1.5);
+		fadeOutElement(document.getElementById("start"), 1.5);
+		fadeOutElement(document.getElementById("cannot_start_message"), 1.5);
+	}
+}
+
 //以下main
 //ブラウザがキャンバス描画に対応している確認
 const canvasForCheck = document.createElement("CANVAS");
@@ -127,13 +158,3 @@ else {
 	document.getElementById("puzzle_division_settings").remove();
 }
 delete canvasForCheck;
-
-//背景のアニメーション
-setInterval(() => {
-	if(document.body.style.backgroundPosition == "") document.body.style.backgroundPosition = "0px 0px";
-	else {
-		const prev = Number(document.body.style.backgroundPosition.match(/\d{1,2}/g)[0]);
-		if(prev >= 79) document.body.style.backgroundPosition = "0px 0px";
-		else document.body.style.backgroundPosition = (prev + 1) + "px " + (prev + 1) + "px";
-	}
-}, 33);

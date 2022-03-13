@@ -1,8 +1,20 @@
 body {
 	margin: 0;
-	background-image: linear-gradient(aliceblue 2px, transparent 2px), linear-gradient(90deg, aliceblue 2px, transparent 2px);
 	background-size: 80px 80px;
 	background-position: 0px 0px;
+	transition:  1.5s;
+	animation : background-animation 3s linear infinite;
+}
+@keyframes background-animation {
+	100% {
+		background-position: 80px 80px;
+	}
+}
+.background_blue {
+	background-image: linear-gradient(aliceblue 2px, transparent 2px), linear-gradient(90deg, aliceblue 2px, transparent 2px);
+}
+.background_green {
+	background-image: linear-gradient(honeydew 2px, transparent 2px), linear-gradient(90deg, honeydew 2px, transparent 2px);
 }
 label {
 	font-size: xx-large;
@@ -28,7 +40,7 @@ input[type="number"] {
 	position: relative;
 	width: 100%;
 	height: 60px;
-	background-color: #bbffff;
+	transition: 1.5s;
 }
 #header > h1 {
 	position: absolute;
@@ -36,6 +48,12 @@ input[type="number"] {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+.header_blue {
+	background-color: #bbffff;
+}
+.header_green {
+	background-color: #bbffbb;
 }
 #header::after {
 	content: "";
