@@ -3,7 +3,12 @@ puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
 	const imageRatio = puzzleImage.naturalWidth / puzzleImage.naturalHeight;
+	const puzzleArea = document.getElementById("puzzle_area");
 	puzzleImageElement.src = puzzleImage.src;
+	puzzleArea.style.width = "824px";
+	puzzleArea.style.height = "474px";
+	puzzleArea.classList.remove("puzzle_frame", "puzzle_area_empty");
+	puzzleImageElement.classList.add("puzzle_frame");
 	document.getElementById("puzzle_area").classList.remove("hidden");
 	if(imageRatio >= 16 / 9) {
 		puzzleImageElement.style.width = "800px"; 

@@ -11,10 +11,10 @@
 			<h1>ピクチャージグソーパズル</h1>
 		</div>
 		<div id="main_area">
-			<div class="button" onclick="selectImage()">画像の選択</div>
-			<div id="puzzle_area" class="hidden">
-				<img id="puzzle_image" class="puzzle_preview_image_area puzzle_frame">
-				<canvas id="puzzle_divide_canvas" class="puzzle_preview_image_area"></canvas>
+			<div id="puzzle_area" class="puzzle_frame puzzle_area_empty" onclick="selectImage()">
+				<p id="puzzle_empty_text">クリックして画像の選択</p>
+				<img id="puzzle_image">
+				<canvas id="puzzle_divide_canvas"></canvas>
 			</div>
 		</div>
 	</body>

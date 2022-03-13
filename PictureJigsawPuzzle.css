@@ -56,16 +56,26 @@ body {
 }
 #puzzle_area {
 	position: relative;
-	width: 824px;
-	height: 474px;
+	width: 800px;
+	height: 450px;
 	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
 }
-.puzzle_frame {
-	border: ridge 12px wheat;
-}
-.puzzle_preview_image_area {
+#puzzle_area > * {
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+.puzzle_area_empty {
+	background-color: lightgray;
+}
+.puzzle_frame {
+	border: ridge 12px wheat;
+}
+#puzzle_empty_text {
+	margin: 0;
+	color: dimgray;
+	font-size: xx-large;
 }
