@@ -158,8 +158,54 @@ input[type="number"] {
 label[for="puzzle_row_division"] {
 	margin-left: 50px;
 }
+#start_display {
+	display: block;
+	position: fixed;
+	top: 347px;
+	left: 50%;
+	width: 300%;
+	height: 80px;
+	margin: 0;
+	transform: translate(-50%, -50%) scaleY(0%);
+	transform-origin: top left;
+	text-align: center;
+	line-height: 80px;
+	color: honeydew;
+	text-shadow: 0px 0px 10px darkgreen;
+	font-size: 56px;
+	font-weight: bold;
+	background-color: lawngreen;
+	box-shadow: 0px 0px 20px 10px #00000020;
+}
+.start_display_animation {
+	animation: start-display-animation 3s linear;
+}
+@keyframes start-display-animation {
+	0% {
+		transform: scaleY(0%) translate(-17%, -50%);
+		opacity: 0;
+	}
+	10% {
+		transform: scaleY(100%) translate(-17%, -50%);
+		opacity: 1;
+	}
+	30% {
+		transform: scale(100%) translate(-50%, -50%);
+	}
+	70% {
+		transform: scale(100%) translate(-50%, -50%);
+	}
+	90% {
+		transform: scaleY(100%) translate(-83%, -50%);
+		opacity: 1;
+	}
+	100% {
+		transform: scaleY(0%) translate(-83%, -50%);
+		opacity: 0;
+	}
+}
 #piece_select_area {
-	position: absolute;
+	position: fixed;
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
@@ -186,5 +232,5 @@ label[for="puzzle_row_division"] {
 #piece_select_area > canvas {
 	height: max-content;
 	max-height: calc(100% - 40px);
-	margin: 10px 10px 10px 10px;
+	margin: 10px;
 }

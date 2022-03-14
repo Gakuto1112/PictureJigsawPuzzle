@@ -228,6 +228,13 @@ function start(clickElement) {
 									else {
 										setTimeout(() => {
 											pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
+											setTimeout(() => {
+												const startDisplay = document.getElementById("start_display");
+												startDisplay.classList.add("start_display_animation");
+												startDisplay.addEventListener("animationend", () => {
+													startDisplay.classList.remove("start_display_animation");
+												});
+											}, 1000);
 										}, 1000);
 										clearInterval(puzzlePieceFadeInInterval);
 									}
