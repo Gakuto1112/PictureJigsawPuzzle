@@ -220,6 +220,7 @@ function start(clickElement) {
 							while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 							setTimeout(() => {
 								//ピース出現アニメーション
+								pieceSelectArea.style.paddingBottom = puzzleImageCanvas.height / row / 2 + 10 + "px";
 								const puzzlePieceFadeInInterval = setInterval(() => {
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
