@@ -187,7 +187,7 @@ function start(clickElement) {
 						puzzlePiece.setAttribute("data-piece-row", i);
 						puzzlePiece.width = puzzleImageCanvas.width / column;
 						puzzlePiece.height = puzzleImageCanvas.height / row;
-						puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzleImageCanvas.width / column, puzzleImageCanvas.height / row);
+						puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzlePiece.width, puzzlePiece.height);
 						puzzlePieceArea.appendChild(puzzlePiece);
 						const puzzlePieceClone = document.createElement("CANVAS");
 						puzzlePieceClone.classList.add("hidden");
@@ -223,17 +223,16 @@ function start(clickElement) {
 								const puzzlePieceFadeInInterval = setInterval(() => {
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
-									pieceSelectArea.scrollTo({ top: pieceSelectArea.scrollHeight, left: 0 });
+									pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
 									if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
 									else {
+										pieceSelectArea.style.paddingBottom = "0px";
 										setTimeout(() => {
 											pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
 											setTimeout(() => {
 												const startDisplay = document.getElementById("start_display");
 												startDisplay.classList.add("start_display_animation");
-												startDisplay.addEventListener("animationend", () => {
-													startDisplay.classList.remove("start_display_animation");
-												});
+												startDisplay.addEventListener("animationend", () => startDisplay.classList.remove("start_display_animation"));
 											}, 1000);
 										}, 1000);
 										clearInterval(puzzlePieceFadeInInterval);
