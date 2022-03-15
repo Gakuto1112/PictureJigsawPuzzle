@@ -311,6 +311,22 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 	if(selectedPiece) {
 		switch(selectedPiece.parentElement.id) {
 			case "puzzle_piece_area":
+				if(targetPlaceElement) {
+					const selectedPieceColumn = selectedPiece.style.gridColumn;
+					const selectedPieceRow = selectedPiece.style.gridRow;
+					selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
+					selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
+					targetPlaceElement.style.gridColumn = selectedPieceColumn;
+					targetPlaceElement.style.gridRow = selectedPieceRow;
+					selectedPiece.classList.remove("piece_selecting");
+					selectedPiece = null;
+				}
+				else {
+					selectedPiece.style.gridColumn = clickColumn + 1;
+					selectedPiece.style.gridRow = clickRow + 1;
+					selectedPiece.classList.remove("piece_selecting");
+					selectedPiece = null;
+				}
 				break;
 			case "piece_select_area":
 				if(targetPlaceElement) {
@@ -326,6 +342,10 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 				selectedPiece = null;			
 				break;
 		}
+	}
+	else if(targetPlaceElement) {
+		selectedPiece = targetPlaceElement;
+		selectedPiece.classList.add("piece_selecting");
 	}
 }
 
