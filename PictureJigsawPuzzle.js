@@ -1,4 +1,25 @@
+class GameTimer {
+	constructor() {
+		this.gameTimerInterval;
+		this.gameTimeCount = 0;
+	}
+
+	startTimer() {
+		this.gameTimerInterval = setInterval(() => {
+			this.gameTimeCount++;
+			document.getElementById("game_timer_minute").innerText = Math.floor(this.gameTimeCount / 60);
+			document.getElementById("game_timer_second").innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2);
+		}, 1000);
+	}
+
+	stopTimer() {
+		clearInterval(this.gameTimerInterval);
+	}
+}
+
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
+const gameTimer = new GameTimer(); //ゲームタイマー
+
 puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
@@ -235,7 +256,11 @@ function start(clickElement) {
 											setTimeout(() => {
 												const startDisplay = document.getElementById("start_display_text");
 												startDisplay.classList.add("start_display_animation");
-												startDisplay.addEventListener("animationend", () => startDisplay.classList.remove("start_display_animation"));
+												startDisplay.addEventListener("animationend", () => {
+													startDisplay.classList.remove("start_display_animation");
+													document.getElementById("game_timer_area").classList.remove("hidden");
+													gameTimer.startTimer();
+												});
 											}, 1000);
 										}, 1000);
 										clearInterval(puzzlePieceFadeInInterval);
