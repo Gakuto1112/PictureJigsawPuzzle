@@ -307,7 +307,6 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 	const clickColumn = Math.floor(offsetX / (/\d+/.exec(puzzlePieceArea.style.width) / /\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)));
 	const clickRow = Math.floor(offsetY / (/\d+/.exec(puzzlePieceArea.style.height) / /\d+/.exec(puzzlePieceArea.style.gridTemplateRows)));
 	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
-	console.log(targetPlaceElement);
 	if(selectedPiece) {
 		switch(selectedPiece.parentElement.id) {
 			case "puzzle_piece_area":
@@ -323,6 +322,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 						selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
 						targetPlaceElement.style.gridColumn = selectedPieceColumn;
 						targetPlaceElement.style.gridRow = selectedPieceRow;
+						completeCheck();
 					}
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
@@ -343,15 +343,32 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 				clonedPiece.style.gridColumn = clickColumn + 1;
 				clonedPiece.style.gridRow = clickRow + 1;
 				puzzlePieceArea.appendChild(clonedPiece);
+				if(!targetPlaceElement) completeCheck();
 				selectedPiece.classList.remove("piece_selecting");
 				selectedPiece.classList.add("piece_used");
-				selectedPiece = null;			
+				selectedPiece = null;
 				break;
 		}
 	}
 	else if(targetPlaceElement) {
 		selectedPiece = targetPlaceElement;
 		selectedPiece.classList.add("piece_selecting");
+	}
+}
+
+function completeCheck() {
+	//パズルが完成したか確認する。
+	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+	if(puzzlePieceArea.children.length == Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)) * Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateRows))) {
+		if(!Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 != piece.getAttribute("data-piece-column") || Number(/\d+/.exec(piece.style.gridRow)) - 1 != piece.getAttribute("data-piece-row"))) {
+			const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
+			gameTimer.stopTimer();
+			document.getElementById("puzzle_image").classList.add("puzzle_frame");
+			puzzleDivideCanvas.classList.remove("puzzle_frame");		
+			document.getElementById("puzzle_image").classList.remove("hidden");
+			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
+			fadeOutElement(puzzleDivideCanvas, 1.5);
+		}
 	}
 }
 
