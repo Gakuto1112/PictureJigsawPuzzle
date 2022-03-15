@@ -132,7 +132,7 @@ input[type="number"] {
 	display: grid;
 }
 .puzzle_piece_fade_in {
-	animation: puzzle-piece-fade-in 0.3s linear;;
+	animation: puzzle-piece-fade-in 0.3s linear;
 }
 @keyframes puzzle-piece-fade-in {
 	0% {
@@ -242,4 +242,15 @@ label[for="puzzle_row_division"] {
 	height: max-content;
 	max-height: calc(100% - 40px);
 	margin: 10px;
+}
+.piece_selecting {
+	animation: piece-selecting 0.5s linear infinite;
+}
+@keyframes piece-selecting {
+	50% {
+		filter: brightness(50%);
+	}
+	100% {
+		filter: brightness(100%);
+	}
 }

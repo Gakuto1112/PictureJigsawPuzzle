@@ -19,6 +19,7 @@ class GameTimer {
 
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 const gameTimer = new GameTimer(); //ゲームタイマー
+let selectedPiece; //選択したパズルピース
 
 puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
@@ -247,6 +248,7 @@ function start(clickElement) {
 								const puzzlePieceFadeInInterval = setInterval(() => {
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
 									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
+									pieceSelectArea.children.item(puzzlePieceFadeInCount).addEventListener("animationend", (event) => event.target.classList.remove("puzzle_piece_fade_in"), { once: true });
 									pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
 									if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
 									else {
@@ -259,6 +261,7 @@ function start(clickElement) {
 												startDisplay.addEventListener("animationend", () => {
 													startDisplay.classList.remove("start_display_animation");
 													document.getElementById("game_timer_area").classList.remove("hidden");
+													randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 													gameTimer.startTimer();
 												});
 											}, 1000);
@@ -273,6 +276,19 @@ function start(clickElement) {
 				}, 3000 / (column * row));
 			}, { once: true });
 		});
+	}
+}
+
+function pieceClick(pieceElement) {
+	//ピースをクリックしたときの処理
+	if(pieceElement == selectedPiece) {
+		selectedPiece.classList.remove("piece_selecting");
+		selectedPiece = null;
+	}
+	else {
+		if(selectedPiece) selectedPiece.classList.remove("piece_selecting");
+		selectedPiece = pieceElement;
+		selectedPiece.classList.add("piece_selecting");
 	}
 }
 
