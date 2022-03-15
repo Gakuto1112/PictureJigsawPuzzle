@@ -312,12 +312,18 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 		switch(selectedPiece.parentElement.id) {
 			case "puzzle_piece_area":
 				if(targetPlaceElement) {
-					const selectedPieceColumn = selectedPiece.style.gridColumn;
-					const selectedPieceRow = selectedPiece.style.gridRow;
-					selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
-					selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
-					targetPlaceElement.style.gridColumn = selectedPieceColumn;
-					targetPlaceElement.style.gridRow = selectedPieceRow;
+					if(selectedPiece.style.gridColumn == targetPlaceElement.style.gridColumn && selectedPiece.style.gridRow == targetPlaceElement.style.gridRow) {
+						Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row")).classList.remove("piece_used");
+						targetPlaceElement.remove();
+					}
+					else {
+						const selectedPieceColumn = selectedPiece.style.gridColumn;
+						const selectedPieceRow = selectedPiece.style.gridRow;
+						selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
+						selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
+						targetPlaceElement.style.gridColumn = selectedPieceColumn;
+						targetPlaceElement.style.gridRow = selectedPieceRow;
+					}
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
 				}
