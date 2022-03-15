@@ -178,6 +178,8 @@ function start(clickElement) {
 				const pieceArray = [];
 				let puzzlePieceFadeOutCount = 0;
 				let puzzlePieceFadeInCount = 0;
+				puzzlePieceArea.style.width = puzzleImageCanvas.width + "px";
+				puzzlePieceArea.style.height = puzzleImageCanvas.height + "px";
 				puzzlePieceArea.style.gridTemplateColumns = "repeat(" + column + ", 1fr)";
 				puzzlePieceArea.style.gridTemplateRows = "repeat(" + row + ", 1fr)";
 				for(let i = 0; i < row; i++) {
