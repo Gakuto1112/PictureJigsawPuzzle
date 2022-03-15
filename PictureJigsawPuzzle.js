@@ -83,6 +83,16 @@ function fadeOutElement(element, transition, callback) {
 	}, { once: true });
 }
 
+function cloneCanvasElement(canvasToClone, attributes) {
+	//キャンバスを複製する。
+	const clonedCanvas = document.createElement("CANVAS");
+	clonedCanvas.width = canvasToClone.width;
+	clonedCanvas.height = canvasToClone.height;
+	if(attributes) Object.keys(attributes).forEach((key) => clonedCanvas.setAttribute(key, attributes[key]));
+	clonedCanvas.getContext("2d").drawImage(canvasToClone, 0, 0);
+	return clonedCanvas;
+}
+
 function selectImage(clickElement) {
 	//画像選択ウィンドウを開けて、画像を選択し、画像を表示させる処理
 	if(clickElement.classList.contains("puzzle_area_image_select")) {
@@ -213,13 +223,10 @@ function start(clickElement) {
 						puzzlePiece.height = puzzleImageCanvas.height / row;
 						puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzlePiece.width, puzzlePiece.height);
 						puzzlePieceArea.appendChild(puzzlePiece);
-						const puzzlePieceClone = document.createElement("CANVAS");
+						const puzzlePieceClone = cloneCanvasElement(puzzlePiece);
 						puzzlePieceClone.classList.add("hidden");
 						puzzlePieceClone.setAttribute("data-piece-column", j);
 						puzzlePieceClone.setAttribute("data-piece-row", i);
-						puzzlePieceClone.width = puzzlePiece.width;
-						puzzlePieceClone.height = puzzlePiece.height;
-						puzzlePieceClone.getContext("2d").drawImage(puzzlePiece, 0, 0);
 						pieceArray.push(puzzlePieceClone);
 					}
 				}
@@ -262,6 +269,7 @@ function start(clickElement) {
 													startDisplay.classList.remove("start_display_animation");
 													document.getElementById("game_timer_area").classList.remove("hidden");
 													randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
+													puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
 													gameTimer.startTimer();
 												});
 											}, 1000);
@@ -289,6 +297,33 @@ function pieceClick(pieceElement) {
 		if(selectedPiece) selectedPiece.classList.remove("piece_selecting");
 		selectedPiece = pieceElement;
 		selectedPiece.classList.add("piece_selecting");
+	}
+}
+
+function puzzlePieceAreaClick(offsetX, offsetY) {
+	//ピースエリアをクリックしたときの処理
+	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+	const clickColumn = Math.floor(offsetX / (/\d+/.exec(puzzlePieceArea.style.width) / /\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)));
+	const clickRow = Math.floor(offsetY / (/\d+/.exec(puzzlePieceArea.style.height) / /\d+/.exec(puzzlePieceArea.style.gridTemplateRows)));
+	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(piece.style.gridColumn) == clickColumn && Number(piece.style.gridRow) == clickRow);
+	if(selectedPiece) {
+		switch(selectedPiece.parentElement.id) {
+			case "puzzle_piece_area":
+				break;
+			case "piece_select_area":
+				if(targetPlaceElement) {
+
+				}
+				else {
+					const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
+					clonedPiece.style.gridColumn = clickColumn + 1;
+					clonedPiece.style.gridRow = clickRow + 1;
+					puzzlePieceArea.appendChild(clonedPiece);
+					selectedPiece.classList.remove("piece_selecting");
+					selectedPiece = null;			
+				}
+				break;
+		}
 	}
 }
 

@@ -153,6 +153,9 @@ input[type="number"] {
 		opacity: 0;
 	}
 }
+#puzzle_divide_canvas {
+	pointer-events: none;
+}
 #puzzle_division_settings {
 	margin-top: 50px;
 }
