@@ -263,10 +263,12 @@ function start(clickElement) {
 										setTimeout(() => {
 											pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
 											setTimeout(() => {
-												const startDisplay = document.getElementById("start_display_text");
-												startDisplay.classList.add("start_display_animation");
-												startDisplay.addEventListener("animationend", () => {
-													startDisplay.classList.remove("start_display_animation");
+												const popupDisplay = document.getElementById("popup_display_text");
+												popupDisplay.innerText = "START";
+												popupDisplay.classList.add("popup_display_animation");
+												popupDisplay.addEventListener("animationend", () => {
+													popupDisplay.innerText = "";
+													popupDisplay.classList.remove("popup_display_animation");
 													document.getElementById("game_timer_area").classList.remove("hidden");
 													randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 													puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
@@ -362,12 +364,25 @@ function completeCheck() {
 	if(puzzlePieceArea.children.length == Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)) * Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateRows))) {
 		if(!Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 != piece.getAttribute("data-piece-column") || Number(/\d+/.exec(piece.style.gridRow)) - 1 != piece.getAttribute("data-piece-row"))) {
 			const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
+			const popupDisplay = document.getElementById("popup_display_text");
+			const pieceSelectArea = document.getElementById("piece_select_area");
 			gameTimer.stopTimer();
 			document.getElementById("puzzle_image").classList.add("puzzle_frame");
 			puzzleDivideCanvas.classList.remove("puzzle_frame");		
 			document.getElementById("puzzle_image").classList.remove("hidden");
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			fadeOutElement(puzzleDivideCanvas, 1.5);
+			pieceSelectArea.classList.add("piece_select_area_slide_out");
+			pieceSelectArea.addEventListener("transitionend", () => {
+				pieceSelectArea.classList.add("hidden");
+				pieceSelectArea.classList.remove("piece_select_area_slide_out");
+			});
+			popupDisplay.innerText = "PUZZLE COMPLETE!";
+			popupDisplay.classList.add("popup_display_animation");
+			popupDisplay.addEventListener("animationend", () => {
+				popupDisplay.classList.remove("popup_display_animation");
+				popupDisplay.innerText = "";
+			});
 		}
 	}
 }

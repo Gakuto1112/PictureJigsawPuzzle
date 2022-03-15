@@ -31,9 +31,9 @@ input[type="number"] {
 	display: none !important;
 }
 .fade_in {
-	animation-name: fadeIn;
+	animation-name: fade-in;
 }
-@keyframes fadeIn {
+@keyframes fade-in {
 	0% {
 		opacity: 0;
 	}
@@ -165,14 +165,14 @@ input[type="number"] {
 label[for="puzzle_row_division"] {
 	margin-left: 50px;
 }
-#start_display {
+#popup_display {
 	position: absolute;
 	top: 347px;
 	left: 50%;
 	width: 100%;
 	transform: translate(-50%, -50%);
 }
-#start_display_text {
+#popup_display_text {
 	display: block;
 	position: fixed;
 	top: 50%;
@@ -192,10 +192,10 @@ label[for="puzzle_row_division"] {
 	box-shadow: 0px 0px 20px 10px #00000020;
 	overflow-x: hidden;
 }
-.start_display_animation {
-	animation: start-display-animation 3s linear;
+.popup_display_animation {
+	animation: popup-display-animation 3s linear;
 }
-@keyframes start-display-animation {
+@keyframes popup-display-animation {
 	0% {
 		transform: scaleY(0%) translate(-17%, -50%);
 		opacity: 0;
@@ -243,6 +243,10 @@ label[for="puzzle_row_division"] {
 	100% {
 		transform: translateY(0%);
 	}
+}
+.piece_select_area_slide_out {
+	transition: 0.5s;
+	transform: translateY(100%);
 }
 #piece_select_area > canvas {
 	height: max-content;
