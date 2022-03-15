@@ -260,3 +260,6 @@ label[for="puzzle_row_division"] {
 		filter: brightness(100%);
 	}
 }
+.piece_used {
+	opacity: 0.25;
+}

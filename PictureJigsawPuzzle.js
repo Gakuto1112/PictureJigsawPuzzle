@@ -293,7 +293,7 @@ function pieceClick(pieceElement) {
 		selectedPiece.classList.remove("piece_selecting");
 		selectedPiece = null;
 	}
-	else {
+	else if(!pieceElement.classList.contains("piece_used")) {
 		if(selectedPiece) selectedPiece.classList.remove("piece_selecting");
 		selectedPiece = pieceElement;
 		selectedPiece.classList.add("piece_selecting");
@@ -303,6 +303,7 @@ function pieceClick(pieceElement) {
 function puzzlePieceAreaClick(offsetX, offsetY) {
 	//ピースエリアをクリックしたときの処理
 	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+	const pieceSelectArea = document.getElementById("piece_select_area");
 	const clickColumn = Math.floor(offsetX / (/\d+/.exec(puzzlePieceArea.style.width) / /\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)));
 	const clickRow = Math.floor(offsetY / (/\d+/.exec(puzzlePieceArea.style.height) / /\d+/.exec(puzzlePieceArea.style.gridTemplateRows)));
 	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
@@ -312,12 +313,16 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 			case "puzzle_piece_area":
 				break;
 			case "piece_select_area":
-				if(targetPlaceElement) targetPlaceElement.remove();
+				if(targetPlaceElement) {
+					Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row")).classList.remove("piece_used");
+					targetPlaceElement.remove();
+				}
 				const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
 				clonedPiece.style.gridColumn = clickColumn + 1;
 				clonedPiece.style.gridRow = clickRow + 1;
 				puzzlePieceArea.appendChild(clonedPiece);
 				selectedPiece.classList.remove("piece_selecting");
+				selectedPiece.classList.add("piece_used");
 				selectedPiece = null;			
 				break;
 		}
