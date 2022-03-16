@@ -37,9 +37,9 @@
 					</ul>		
 				</div>
 				<div id="pause_menu" class="hidden">
-					<div class="button button_green">再開</div>
-					<div class="button button_space button_green">元の画像を確認</div>
-					<div class="button button_space button_green">メインメニューに戻る</div>
+					<div class="button button_green" onclick="pause();">再開</div>
+					<div class="button button_space button_green" onclick="fadeInElement(document.getElementById('image_show_area'), 0.5);">元の画像を確認</div>
+					<div class="button button_space button_green" onclick="newGame();">メインメニューに戻る</div>
 				</div>
 				<div id="end_menu" class="hidden">
 					<h1 id="result_message"><span name="piece_count">25</span>ピースのパズルを<span name="game_timer_minute">0</span>:<span name="game_timer_second">00</span>で完成させました！</h1>
@@ -51,11 +51,17 @@
 		<div id="popup_display">
 			<p id="popup_display_text"></p>
 		</div>
-		<div id="pause_button" class="button button_green hidden">
+		<div id="pause_button" class="button button_green hidden" onclick="pause();">
 			<div></div>
 			<div></div>
 		</div>
 		<div id="piece_select_area" class="hidden"></div>
 		<div id="piece_moving_area" class="hidden"></div>
+		<div id="image_show_area" class="hidden">
+			<div>
+				<img class="puzzle_frame">
+				<div class="button button_green" onclick="fadeOutElement(document.getElementById('image_show_area'), 1.5);">閉じる</div>
+			</div>
+		</div>
 	</body>
 </html>

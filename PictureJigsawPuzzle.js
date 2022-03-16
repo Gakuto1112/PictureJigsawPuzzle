@@ -2,6 +2,7 @@ class GameTimer {
 	constructor() {
 		this.gameTimerInterval;
 		this.gameTimeCount = 0;
+		this.isTimerCounting = false;
 	}
 
 	startTimer() {
@@ -10,10 +11,12 @@ class GameTimer {
 			document.getElementsByName("game_timer_minute").forEach((element) => element.innerText = Math.floor(this.gameTimeCount / 60));
 			document.getElementsByName("game_timer_second").forEach((element) => element.innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2));
 		}, 1000);
+		this.isTimerCounting = true;
 	}
 
 	stopTimer() {
 		clearInterval(this.gameTimerInterval);
+		this.isTimerCounting = false;
 	}
 }
 
@@ -25,23 +28,24 @@ puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
 	const puzzleBackground = document.getElementById("puzzle_background");
+	const imageShowImage = document.querySelector("#image_show_area > div > img");
 	const imageRatio = puzzleImage.naturalWidth / puzzleImage.naturalHeight;
 	const puzzleArea = document.getElementById("puzzle_area");
-	puzzleImageElement.src = puzzleImage.src;
+	puzzleImageElement.src = imageShowImage.src = puzzleImage.src;
 	puzzleArea.style.width = "824px";
 	puzzleArea.style.height = "474px";
 	puzzleArea.classList.remove("puzzle_frame");
 	puzzleDivideCanvas.classList.add("puzzle_frame");
 	document.getElementById("puzzle_empty_text").classList.add("hidden");
 	if(imageRatio >= 16 / 9) {
-		puzzleImageElement.style.width = "800px"; 
-		puzzleImageElement.style.height = "";
+		puzzleImageElement.style.width = imageShowImage.style.width = "800px"; 
+		puzzleImageElement.style.height = imageShowImage.style.height = "";
 		puzzleDivideCanvas.width = 800;
 		puzzleDivideCanvas.height = 800 / imageRatio;
 	}
 	else {
-		puzzleImageElement.style.width = ""; 
-		puzzleImageElement.style.height = "450px"; 
+		puzzleImageElement.style.width = imageShowImage.style.width = ""; 
+		puzzleImageElement.style.height = imageShowImage.style.height = "450px"; 
 		puzzleDivideCanvas.width = 450 * imageRatio;
 		puzzleDivideCanvas.height = 450;
 	}
@@ -304,71 +308,73 @@ function pieceClick(pieceElement) {
 
 function puzzlePieceAreaClick(offsetX, offsetY) {
 	//ピースエリアをクリックしたときの処理
-	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
-	const puzzlePieceAreaRect = puzzlePieceArea.getBoundingClientRect();
-	const pieceSelectArea = document.getElementById("piece_select_area");
-	const pieceWidth = Number(/\d+/.exec(puzzlePieceArea.style.width)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateColumns));
-	const pieceHeight = Number(/\d+/.exec(puzzlePieceArea.style.height)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateRows));
-	const clickColumn = Math.floor(offsetX / pieceWidth);
-	const clickRow = Math.floor(offsetY / pieceHeight);
-	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
-	if(selectedPiece && !document.getElementById("piece_moving_area").firstElementChild) {
-		switch(selectedPiece.parentElement.id) {
-			case "puzzle_piece_area":
-				if(targetPlaceElement) {
-					if(selectedPiece.style.gridColumn == targetPlaceElement.style.gridColumn && selectedPiece.style.gridRow == targetPlaceElement.style.gridRow) {
+	if(gameTimer.isTimerCounting) {
+		const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+		const puzzlePieceAreaRect = puzzlePieceArea.getBoundingClientRect();
+		const pieceSelectArea = document.getElementById("piece_select_area");
+		const pieceWidth = Number(/\d+/.exec(puzzlePieceArea.style.width)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateColumns));
+		const pieceHeight = Number(/\d+/.exec(puzzlePieceArea.style.height)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateRows));
+		const clickColumn = Math.floor(offsetX / pieceWidth);
+		const clickRow = Math.floor(offsetY / pieceHeight);
+		const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
+		if(selectedPiece && !document.getElementById("piece_moving_area").firstElementChild) {
+			switch(selectedPiece.parentElement.id) {
+				case "puzzle_piece_area":
+					if(targetPlaceElement) {
+						if(selectedPiece.style.gridColumn == targetPlaceElement.style.gridColumn && selectedPiece.style.gridRow == targetPlaceElement.style.gridRow) {
+							const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
+							const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
+							pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
+							targetPlaceElement.remove();	
+						}
+						else {
+							const selectedPieceColumn = selectedPiece.style.gridColumn;
+							const selectedPieceRow = selectedPiece.style.gridRow;
+							const selectedPieceRect = selectedPiece.getBoundingClientRect();
+							pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
+							pieceMovingAnimation(targetPlaceElement, "hidden", selectedPieceRect.left + window.scrollX, selectedPieceRect.top + window.scrollY, 0.3, false, (piece) => {
+								piece.classList.remove("hidden");
+								completeCheck();
+							});
+							selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
+							selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
+							targetPlaceElement.style.gridColumn = selectedPieceColumn;
+							targetPlaceElement.style.gridRow = selectedPieceRow;
+						}
+						selectedPiece.classList.remove("piece_selecting");
+						selectedPiece = null;
+					}
+					else {
+						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
+						selectedPiece.style.gridColumn = clickColumn + 1;
+						selectedPiece.style.gridRow = clickRow + 1;
+						selectedPiece.classList.remove("piece_selecting");
+						selectedPiece = null;
+					}
+					break;
+				case "piece_select_area":
+					if(targetPlaceElement) {
 						const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
 						const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
 						pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
-						targetPlaceElement.remove();	
+						targetPlaceElement.remove();
 					}
-					else {
-						const selectedPieceColumn = selectedPiece.style.gridColumn;
-						const selectedPieceRow = selectedPiece.style.gridRow;
-						const selectedPieceRect = selectedPiece.getBoundingClientRect();
-						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
-						pieceMovingAnimation(targetPlaceElement, "hidden", selectedPieceRect.left + window.scrollX, selectedPieceRect.top + window.scrollY, 0.3, false, (piece) => {
-							piece.classList.remove("hidden");
-							completeCheck();
-						});
-						selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
-						selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
-						targetPlaceElement.style.gridColumn = selectedPieceColumn;
-						targetPlaceElement.style.gridRow = selectedPieceRow;
-					}
+					const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
+					clonedPiece.style.gridColumn = clickColumn + 1;
+					clonedPiece.style.gridRow = clickRow + 1;
+					pieceMovingAnimation(selectedPiece, "piece_used", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, () => {
+						puzzlePieceArea.appendChild(clonedPiece);
+						if(!targetPlaceElement) completeCheck();
+					});
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
-				}
-				else {
-					pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
-					selectedPiece.style.gridColumn = clickColumn + 1;
-					selectedPiece.style.gridRow = clickRow + 1;
-					selectedPiece.classList.remove("piece_selecting");
-					selectedPiece = null;
-				}
-				break;
-			case "piece_select_area":
-				if(targetPlaceElement) {
-					const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
-					const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
-					pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
-					targetPlaceElement.remove();
-				}
-				const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
-				clonedPiece.style.gridColumn = clickColumn + 1;
-				clonedPiece.style.gridRow = clickRow + 1;
-				pieceMovingAnimation(selectedPiece, "piece_used", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, () => {
-					puzzlePieceArea.appendChild(clonedPiece);
-					if(!targetPlaceElement) completeCheck();
-				});
-				selectedPiece.classList.remove("piece_selecting");
-				selectedPiece = null;
-				break;
+					break;
+			}
 		}
-	}
-	else if(targetPlaceElement) {
-		selectedPiece = targetPlaceElement;
-		selectedPiece.classList.add("piece_selecting");
+		else if(targetPlaceElement) {
+			selectedPiece = targetPlaceElement;
+			selectedPiece.classList.add("piece_selecting");
+		}
 	}
 }
 
@@ -420,6 +426,31 @@ function completeCheck() {
 	}
 }
 
+function pause() {
+	//ゲームを一時停止する。
+	const pieceSelectArea = document.getElementById("piece_select_area");
+	const pauseMenu = document.getElementById("pause_menu");
+	if(gameTimer.isTimerCounting) {
+		gameTimer.stopTimer();
+		if (selectedPiece) {
+			selectedPiece.classList.remove("piece_selecting");
+			selectedPiece = null;
+		}
+		pieceSelectArea.classList.add("piece_select_area_slide_out");
+		pauseMenu.classList.remove("hidden");
+		pieceSelectArea.addEventListener("transitionend", () => {
+			pieceSelectArea.classList.add("hidden");
+			pieceSelectArea.classList.remove("piece_select_area_slide_out");
+		}, { once: true });
+}
+	else {
+		gameTimer.startTimer();
+		pieceSelectArea.classList.add("piece_select_area_slide_in");
+		pieceSelectArea.classList.remove("hidden");
+		pieceSelectArea.addEventListener("animationend", () => pauseMenu.classList.remove("hidden"), { once: true });
+	}
+}
+
 function newGame() {
 	//現在のゲームを放棄し、メインメニューに戻る
 	const puzzleImage = document.getElementById("puzzle_image");
@@ -443,10 +474,11 @@ function newGame() {
 		puzzleDivideCanvas.classList.remove("hidden");
 		puzzleImage.classList.remove("puzzle_frame");		
 		puzzleImage.classList.remove("hidden");
-		while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
+		fadeOutElement(document.getElementById("pause_button"), 0.3);
 		swapClass(document.body, "background_green", "background_blue");
 		swapClass(document.getElementById("header"), "header_green", "header_blue");
 		document.body.addEventListener("transitionend", () => {
+			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
