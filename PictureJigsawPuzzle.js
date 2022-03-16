@@ -18,7 +18,7 @@ class GameTimer {
 }
 
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
-const gameTimer = new GameTimer(); //ゲームタイマー
+let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
 
 puzzleImage.addEventListener("load", () => {
@@ -271,6 +271,7 @@ function start(clickElement) {
 												document.getElementById("piece_moving_area").classList.remove("hidden");
 												randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 												puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
+												gameTimer = new GameTimer();
 												gameTimer.startTimer();
 											}, { once: true });
 										}, 1000);
@@ -415,6 +416,42 @@ function completeCheck() {
 			});
 		}
 	}
+}
+
+function newGame() {
+	//現在のゲームを放棄し、メインメニューに戻る
+	const puzzleImage = document.getElementById("puzzle_image");
+	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
+	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+	const pieceSelectArea = document.getElementById("piece_select_area");
+	while(pieceSelectArea.firstElementChild) pieceSelectArea.firstElementChild.remove();
+	pieceSelectArea.classList.add("piece_select_area_slide_in");
+	pieceSelectArea.classList.remove("hidden");
+	pieceSelectArea.addEventListener("animationend", () => {
+		pieceSelectArea.classList.remove("piece_select_area_slide_in");
+		document.getElementById("pause_menu").classList.add("hidden");
+		document.getElementById("end_menu").classList.add("hidden");
+		document.getElementById("main_menu").classList.remove("hidden");
+		document.getElementById("game_timer_area").classList.add("hidden");
+		document.getElementById("puzzle_column_division").disabled = false;
+		document.getElementById("puzzle_row_division").disabled = false;
+		document.getElementById("start").classList.remove("button_disabled");
+		document.getElementById("puzzle_area").classList.add("puzzle_area_image_select");
+		puzzleDivideCanvas.classList.add("puzzle_frame");
+		puzzleDivideCanvas.classList.remove("hidden");
+		puzzleImage.classList.remove("puzzle_frame");		
+		puzzleImage.classList.remove("hidden");
+		while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
+		swapClass(document.body, "background_green", "background_blue");
+		swapClass(document.getElementById("header"), "header_green", "header_blue");
+		document.body.addEventListener("transitionend", () => {
+			pieceSelectArea.classList.add("piece_select_area_slide_out");
+			pieceSelectArea.addEventListener("transitionend", () => {
+				pieceSelectArea.classList.remove("piece_select_area_slide_out");
+				pieceSelectArea.classList.add("hidden");
+			}, { once: true });
+		}, { once: true });
+	}, { once: true });
 }
 
 //以下main
