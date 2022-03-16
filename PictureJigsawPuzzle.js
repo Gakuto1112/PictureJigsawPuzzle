@@ -45,18 +45,15 @@ class AudioPlayer {
 		this.volume = Math.min(Math.max(newVolume, -1), 1);
 		if(this.audioLoop) this.audioLoop.volume = this.volume;
 	}
-
-	getAudioNames() {
-		return Object.keys(this.audios);
-	}
 }
 
-const music = new AudioPlayer({ main: new Audio("Music/1.mp3"), alternative: new Audio("Music/1.mp3")}, document.getElementsByClassName("music_volume")[0].value);
+const music = new AudioPlayer({ "1": new Audio("Music/1.mp3"), "2": new Audio("Music/2.mp3"), "3": new Audio("Music/3.mp3")}, document.getElementsByClassName("music_volume")[0].value);
 const sound = new AudioPlayer({ buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") }, document.getElementsByClassName("sound_volume")[0].value); //サウンドを保持する変数
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
 let puzzlePieceAreaEvent; //puzzle_piece_areaのイベント変数
+let musicFlag = false; //音楽を再生する用のフラグ
 
 puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
@@ -238,6 +235,7 @@ function start(clickElement) {
 		pieceSelectArea.classList.add("piece_select_area_slide_in");
 		pieceSelectArea.classList.remove("hidden");
 		sound.play("startPush");
+		music.setVolume(music.volume / 2);
 		pieceSelectArea.addEventListener("animationend", () => {
 			document.getElementById("main_menu").classList.add("hidden");
 			pieceSelectArea.classList.remove("piece_select_area_slide_in");
@@ -312,6 +310,7 @@ function start(clickElement) {
 												document.getElementById("game_timer_area").classList.remove("hidden");
 												document.getElementById("piece_moving_area").classList.remove("hidden");
 												fadeInElement(document.getElementById("pause_button"), 0.3);
+												music.setVolume(music.volume * 2);										
 												randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 												puzzlePieceAreaEvent = (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY);
 												puzzlePieceArea.addEventListener("click", puzzlePieceAreaEvent);
@@ -457,6 +456,7 @@ function completeCheck() {
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
 			sound.play("puzzleComplete");
+			music.setVolume(music.volume / 2);	
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.add("hidden");
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
@@ -468,6 +468,7 @@ function completeCheck() {
 					popupDisplay.classList.remove("popup_display_animation");
 					popupDisplay.innerText = "";
 					document.getElementById("end_menu").classList.remove("hidden");
+					music.setVolume(music.volume * 2);			
 				}, { once: true });	
 			});
 		}
@@ -546,6 +547,15 @@ function newGame() {
 	}, { once: true });
 }
 
+function playMusic(element) {
+	music.setVolume(element.value);
+	if(!musicFlag) {
+		music.playLoop(Math.floor(Math.random() * 3 + 1).toString());
+		musicFlag = true;
+	}
+	
+}
+	
 //以下main
 //ブラウザがキャンバス描画に対応している確認
 const canvasForCheck = document.createElement("CANVAS");
@@ -555,7 +565,6 @@ else {
 	document.getElementById("puzzle_division_settings").remove();
 }
 delete canvasForCheck;
-
 Array.prototype.slice.call(document.getElementsByClassName("button")).forEach((element) => {
 	if(element.id != "start") element.addEventListener("click", () => sound.play("buttonPush"));
 });

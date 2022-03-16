@@ -7,6 +7,15 @@
 | --- | --- |
 | ```/Icons/Music.svg``` | [ICOOON MONO](https://icooon-mono.com/)「8分音符アイコン 1」 |
 | ```/Icons/Sound.svg``` | [ICOOON MONO](https://icooon-mono.com/)「音叉の無料アイコン」 |
+
+## ミュージック
+
+| ファイル名 | お借り元 |
+| --- | --- |
+| ```/Music/1.mp3``` | [甘茶の音楽工房](https://amachamusic.chagasi.com/)「レトロゲームセンター」 |
+| ```/Music/2.mp3``` | [甘茶の音楽工房](https://amachamusic.chagasi.com/)「レトロゲームセンターⅡ」 |
+| ```/Music/3.mp3``` | [甘茶の音楽工房](https://amachamusic.chagasi.com/)「レトロゲームセンターⅢ」 |
+
 ## サウンド
 
 | ファイル名 | お借り元 |
