@@ -269,6 +269,7 @@ function start(clickElement) {
 												popupDisplay.classList.remove("popup_display_animation");
 												document.getElementById("game_timer_area").classList.remove("hidden");
 												document.getElementById("piece_moving_area").classList.remove("hidden");
+												fadeInElement(document.getElementById("pause_button"), 0.3);
 												randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 												puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
 												gameTimer = new GameTimer();
@@ -399,6 +400,7 @@ function completeCheck() {
 			document.getElementById("puzzle_image").classList.add("puzzle_frame");
 			puzzleDivideCanvas.classList.remove("puzzle_frame");		
 			document.getElementById("puzzle_image").classList.remove("hidden");
+			fadeOutElement(document.getElementById("pause_button"), 0.3);
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
 			pieceSelectArea.addEventListener("transitionend", () => {

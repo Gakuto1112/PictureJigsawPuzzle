@@ -246,6 +246,24 @@ label[for="puzzle_row_division"] {
 		opacity: 0;
 	}
 }
+#pause_button {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 10px;
+	top: 110px;
+	left: 50%;
+	transform: translateX(420px);
+}
+#pause_button > div {
+	width: 10px;
+	height: 30px;
+	margin: 0px 2px;
+	background-color: white;
+	border-radius: 4px;
+}
 #piece_select_area {
 	position: absolute;
 	display: flex;
