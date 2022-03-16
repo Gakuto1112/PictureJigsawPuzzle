@@ -20,6 +20,7 @@ body {
 }
 label {
 	font-size: xx-large;
+	margin-right: 20px;
 }
 input[type="number"] {
 	width: 2em;
@@ -122,6 +123,20 @@ input[type="number"] {
 	background-color: #249724;
 	border-color: #004b00;
 }
+.icon {
+	width: 32px;
+	height: 32px;
+	margin-right: 10px;
+	transform: rotateZ(20deg);
+	user-select: none;
+	pointer-events: none;
+}
+.icon_blue {
+	filter: opacity(0.6) drop-shadow(0px 0px 0px #00bbbb);
+}
+.icon_green {
+	filter: opacity(0.6) drop-shadow(0px 0px 0px #00bb00);
+}
 #puzzle_area {
 	position: relative;
 	width: 800px;
@@ -190,6 +205,21 @@ input[type="number"] {
 }
 label[for="puzzle_row_division"] {
 	margin-left: 50px;
+}
+#puzzle_division_settings {
+	display: flex;
+	align-items: center;
+}
+.volumes {
+	display: flex;
+	align-items: center;
+	margin: 15px 0px;
+}
+.volumes > input {
+	width: 200px;
+}
+.music_volume {
+	margin-right: 30px;
 }
 #popup_display {
 	position: absolute;

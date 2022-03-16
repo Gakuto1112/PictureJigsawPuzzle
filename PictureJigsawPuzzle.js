@@ -20,7 +20,39 @@ class GameTimer {
 	}
 }
 
-const sounds = { buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") } //サウンドを保持する変数
+class AudioPlayer {
+	constructor(audioList, volume) {
+		this.audios = audioList;
+		this.audioLoop;
+		this.volume = Math.min(Math.max(volume, -1), 1);
+		Object.keys(this.audios).forEach((key) => this.audios[key].load());
+	}
+
+	play(audioName) {
+		const audioTmp = new Audio(this.audios[audioName].src);
+		audioTmp.volume = this.volume;
+		audioTmp.play();	
+	}
+
+	playLoop(audioName) {
+		this.audioLoop = new Audio(this.audios[audioName].src);
+		this.audioLoop.volume = this.volume;
+		this.audioLoop.loop = true;
+		this.audioLoop.play();
+	}
+
+	setVolume(newVolume) {
+		this.volume = Math.min(Math.max(newVolume, -1), 1);
+		if(this.audioLoop) this.audioLoop.volume = this.volume;
+	}
+
+	getAudioNames() {
+		return Object.keys(this.audios);
+	}
+}
+
+const music = new AudioPlayer({ main: new Audio("Music/1.mp3"), alternative: new Audio("Music/1.mp3")}, document.getElementsByClassName("music_volume")[0].value);
+const sound = new AudioPlayer({ buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") }, document.getElementsByClassName("sound_volume")[0].value); //サウンドを保持する変数
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
@@ -205,7 +237,7 @@ function start(clickElement) {
 		swapClass(document.getElementById("header"), "header_blue", "header_green");
 		pieceSelectArea.classList.add("piece_select_area_slide_in");
 		pieceSelectArea.classList.remove("hidden");
-		playSound("startPush");
+		sound.play("startPush");
 		pieceSelectArea.addEventListener("animationend", () => {
 			document.getElementById("main_menu").classList.add("hidden");
 			pieceSelectArea.classList.remove("piece_select_area_slide_in");
@@ -249,7 +281,7 @@ function start(clickElement) {
 			document.getElementById("puzzle_image").classList.add("hidden");
 			const puzzlePieceFadeOutInterval = setInterval(() => {
 				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).classList.add("puzzle_piece_fade_out");
-				playSound("pieceAnimation");
+				sound.play("pieceAnimation");
 				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
 				if(puzzlePieceFadeOutCount < column * row - 1) puzzlePieceFadeOutCount++;
 				else {
@@ -261,7 +293,7 @@ function start(clickElement) {
 							const puzzlePieceFadeInInterval = setInterval(() => {
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
-								playSound("pieceAnimation");
+								sound.play("pieceAnimation");
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).addEventListener("animationend", (event) => event.target.classList.remove("puzzle_piece_fade_in"), { once: true });
 								pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
 								if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
@@ -273,7 +305,7 @@ function start(clickElement) {
 											const popupDisplay = document.getElementById("popup_display_text");
 											popupDisplay.innerText = "START";
 											popupDisplay.classList.add("popup_display_animation");
-											setTimeout(() => playSound("startSound"), 900);
+											setTimeout(() => sound.play("startSound"), 900);
 											popupDisplay.addEventListener("animationend", () => {
 												popupDisplay.innerText = "";
 												popupDisplay.classList.remove("popup_display_animation");
@@ -303,13 +335,13 @@ function start(clickElement) {
 function pieceClick(pieceElement) {
 	//ピースをクリックしたときの処理
 	if(pieceElement == selectedPiece) {
-		playSound("pieceSelect");
+		sound.play("pieceSelect");
 		selectedPiece.classList.remove("piece_selecting");
 		selectedPiece = null;
 	}
 	else if(!pieceElement.classList.contains("piece_used")) {
 		if(selectedPiece) selectedPiece.classList.remove("piece_selecting");
-		playSound("pieceSelect");
+		sound.play("pieceSelect")
 		selectedPiece = pieceElement;
 		selectedPiece.classList.add("piece_selecting");
 	}
@@ -334,7 +366,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 							const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
 							const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
 							pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
-							playSound("pieceMove");
+							sound.play("pieceMove");
 							targetPlaceElement.remove();	
 						}
 						else {
@@ -346,7 +378,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 								piece.classList.remove("hidden");
 								completeCheck();
 							});
-							playSound("pieceMove");
+							sound.play("pieceMove");
 							selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
 							selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
 							targetPlaceElement.style.gridColumn = selectedPieceColumn;
@@ -357,7 +389,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 					}
 					else {
 						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
-						playSound("pieceMove");
+						sound.play("pieceMove");
 						selectedPiece.style.gridColumn = clickColumn + 1;
 						selectedPiece.style.gridRow = clickRow + 1;
 						selectedPiece.classList.remove("piece_selecting");
@@ -378,14 +410,14 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 						puzzlePieceArea.appendChild(clonedPiece);
 						if(!targetPlaceElement) completeCheck();
 					});
-					playSound("pieceMove");
+					sound.play("pieceMove");
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
 					break;
 			}
 		}
 		else if(targetPlaceElement) {
-			playSound("pieceSelect");
+			sound.play("pieceSelect");
 			selectedPiece = targetPlaceElement;
 			selectedPiece.classList.add("piece_selecting");
 		}
@@ -424,7 +456,7 @@ function completeCheck() {
 			fadeOutElement(document.getElementById("pause_button"), 0.3);
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
-			playSound("puzzleComplete");
+			sound.play("puzzleComplete");
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.add("hidden");
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
@@ -442,12 +474,19 @@ function completeCheck() {
 	}
 }
 
+function syncVolumeBar() {
+	//ボリュームバーの実際の音量に合わせる。
+	Array.prototype.slice.call(document.getElementsByClassName("music_volume")).forEach((element) => element.value = music.volume);
+	Array.prototype.slice.call(document.getElementsByClassName("sound_volume")).forEach((element) => element.value = sound.volume);
+}
+
 function pause() {
 	//ゲームを一時停止する。
 	const pieceSelectArea = document.getElementById("piece_select_area");
 	const pauseMenu = document.getElementById("pause_menu");
 	if(gameTimer.isTimerCounting) {
 		gameTimer.stopTimer();
+		syncVolumeBar();
 		if (selectedPiece) {
 			selectedPiece.classList.remove("piece_selecting");
 			selectedPiece = null;
@@ -458,7 +497,7 @@ function pause() {
 			pieceSelectArea.classList.add("hidden");
 			pieceSelectArea.classList.remove("piece_select_area_slide_out");
 		}, { once: true });
-}
+	}
 	else {
 		gameTimer.startTimer();
 		pieceSelectArea.classList.add("piece_select_area_slide_in");
@@ -473,9 +512,10 @@ function newGame() {
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
 	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
 	const pieceSelectArea = document.getElementById("piece_select_area");
-	const pauseMenu = document.getElementById("pause_button");		
+	const pauseMenu = document.getElementById("pause_button");
 	puzzlePieceArea.removeEventListener("click", puzzlePieceAreaEvent);
 	while(pieceSelectArea.firstElementChild) pieceSelectArea.firstElementChild.remove();
+	syncVolumeBar();
 	pieceSelectArea.classList.add("piece_select_area_slide_in");
 	pieceSelectArea.classList.remove("hidden");
 	pieceSelectArea.addEventListener("animationend", () => {
@@ -492,11 +532,11 @@ function newGame() {
 		puzzleDivideCanvas.classList.remove("hidden");
 		puzzleImage.classList.remove("puzzle_frame");		
 		puzzleImage.classList.remove("hidden");
+		while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 		if(!pauseMenu.classList.contains("hidden")) fadeOutElement(pauseMenu, 0.3);
 		swapClass(document.body, "background_green", "background_blue");
 		swapClass(document.getElementById("header"), "header_green", "header_blue");
 		document.body.addEventListener("transitionend", () => {
-			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
@@ -504,12 +544,6 @@ function newGame() {
 			}, { once: true });
 		}, { once: true });
 	}, { once: true });
-}
-
-function playSound(soundName) {
-	//効果音を再生する。
-	const audioTmp = new Audio(sounds[soundName].src);
-	audioTmp.play();
 }
 
 //以下main
@@ -522,9 +556,6 @@ else {
 }
 delete canvasForCheck;
 
-Object.keys(sounds).forEach((key) => {
-	sounds[key].load();
-});
 Array.prototype.slice.call(document.getElementsByClassName("button")).forEach((element) => {
-	if(element.id != "start") element.addEventListener("click", () => playSound("buttonPush"));
+	if(element.id != "start") element.addEventListener("click", () => sound.play("buttonPush"));
 });

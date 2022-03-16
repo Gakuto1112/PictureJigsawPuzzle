@@ -1,6 +1,12 @@
 # クレジット表記
 このアプリケーションを作成するにあたり、以下の素材をお借りしました。
 
+## アイコン
+
+| ファイル名 | お借り元 |
+| --- | --- |
+| ```/Icons/Music.svg``` | [ICOOON MONO](https://icooon-mono.com/)「8分音符アイコン 1」 |
+| ```/Icons/Sound.svg``` | [ICOOON MONO](https://icooon-mono.com/)「音叉の無料アイコン」 |
 ## サウンド
 
 | ファイル名 | お借り元 |
