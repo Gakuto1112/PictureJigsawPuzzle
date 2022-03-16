@@ -83,8 +83,10 @@ input[type="number"] {
 	margin-top: 50px;
 }
 .button {
+	width: 400px;
 	padding: 10px 30px;
 	color: white;
+	text-align: center;
 	font-size: xx-large;
 	border-radius: 40px;
 	cursor: pointer;
@@ -100,6 +102,9 @@ input[type="number"] {
 	transform: none !important;
 	cursor: not-allowed !important;
 }
+.button_space {
+	margin-top: 20px;
+}
 .button_blue {
 	background-color: deepskyblue;
 	border: solid thick royalblue;
@@ -108,10 +113,19 @@ input[type="number"] {
 	background-color: #00a3da;
 	border-color: #2f4ba1;
 }
+.button_green {
+	background-color: limegreen;
+	border: solid thick darkgreen;
+}
+.button_green:hover {
+	background-color: #249724;
+	border-color: #004b00;
+}
 #puzzle_area {
 	position: relative;
 	width: 800px;
 	height: 450px;
+	margin-bottom: 50px;
 	user-select: none;
 }
 .puzzle_area_image_select {
@@ -172,9 +186,6 @@ input[type="number"] {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-}
-#puzzle_division_settings {
-	margin-top: 50px;
 }
 label[for="puzzle_row_division"] {
 	margin-left: 50px;

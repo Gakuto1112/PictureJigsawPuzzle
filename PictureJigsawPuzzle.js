@@ -7,8 +7,8 @@ class GameTimer {
 	startTimer() {
 		this.gameTimerInterval = setInterval(() => {
 			this.gameTimeCount++;
-			document.getElementById("game_timer_minute").innerText = Math.floor(this.gameTimeCount / 60);
-			document.getElementById("game_timer_second").innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2);
+			document.getElementsByName("game_timer_minute").forEach((element) => element.innerText = Math.floor(this.gameTimeCount / 60));
+			document.getElementsByName("game_timer_minute").forEach((element) => element.innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2));
 		}, 1000);
 	}
 
@@ -118,16 +118,18 @@ function selectImage(clickElement) {
 
 function divisionInputCheck() {
 	//分割数入力が正しいか検証
+	const puzzleImageElement = document.getElementById("puzzle_image");
 	const column = document.getElementById("puzzle_column_division");
 	const row = document.getElementById("puzzle_row_division");
-	const pieceCount = document.getElementById("piece_count");
+	const pieceCount = document.getElementsByName("piece_count");
 	const start = document.getElementById("start");
 	const cannotStartMessage = document.getElementById("cannot_start_message");
 	startCheck();
 	if(column.value == 1 && row.value == 1) {
+		if(puzzleImageElement.src != "") drawDivisionLine(1, 1);
 		column.classList.add("text_box_invalid");
 		row.classList.add("text_box_invalid");
-		pieceCount.innerText = 1;
+		pieceCount.forEach((element) => element.innerText = 1);
 		cannotStartMessage.children.item(1).classList.remove("hidden");
 		cannotStartMessage.children.item(2).classList.add("hidden");
 		cannotStartMessage.children.item(3).classList.add("hidden");
@@ -157,10 +159,10 @@ function divisionInputCheck() {
 		}
 	}
 	if(!column.classList.contains("text_box_invalid") && !row.classList.contains("text_box_invalid")) {
-		if(document.getElementById("puzzle_image").src != "") drawDivisionLine(column.value, row.value);
-		pieceCount.innerText = (column.value * row.value).toLocaleString();
+		if(puzzleImageElement.src != "") drawDivisionLine(column.value, row.value);
+		pieceCount.forEach((element) => element.innerText = (column.value * row.value).toLocaleString());
 	}
-	else pieceCount.innerText = "??";
+	else if(column.value != 1 || row.value != 1) pieceCount.forEach((element) => element.innerText = "??");
 }
 
 function drawDivisionLine(column, row) {
@@ -188,103 +190,100 @@ function startCheck() {
 function start(clickElement) {
 	//ゲーム開始
 	if(!clickElement.classList.contains("button_disabled")) {
+		const pieceSelectArea = document.getElementById("piece_select_area");
 		document.getElementById("puzzle_column_division").disabled = true;
 		document.getElementById("puzzle_row_division").disabled = true;
 		clickElement.classList.add("button_disabled");
 		document.getElementById("puzzle_area").classList.remove("puzzle_area_image_select");
 		swapClass(document.body, "background_blue", "background_green");
 		swapClass(document.getElementById("header"), "header_blue", "header_green");
-		fadeOutElement(document.getElementById("main_menu"), 1.5, () => {
-			const pieceSelectArea = document.getElementById("piece_select_area");
-			pieceSelectArea.classList.add("piece_select_area_slide_in");
-			pieceSelectArea.classList.remove("hidden");
-			pieceSelectArea.addEventListener("animationend", () => {
-				pieceSelectArea.classList.remove("piece_select_area_slide_in");
-				//画像の分割
-				const puzzleImageCanvas = document.getElementById("puzzle_divide_canvas");
-				const column = document.getElementById("puzzle_column_division").value;
-				const row = document.getElementById("puzzle_row_division").value;	
-				const puzzlePieceArea = document.getElementById("puzzle_piece_area");
-				const pieceArray = [];
-				let puzzlePieceFadeOutCount = 0;
-				let puzzlePieceFadeInCount = 0;
-				puzzlePieceArea.style.width = puzzleImageCanvas.width + "px";
-				puzzlePieceArea.style.height = puzzleImageCanvas.height + "px";
-				puzzlePieceArea.style.gridTemplateColumns = "repeat(" + column + ", 1fr)";
-				puzzlePieceArea.style.gridTemplateRows = "repeat(" + row + ", 1fr)";
-				for(let i = 0; i < row; i++) {
-					for(let j = 0; j < column; j++) {
-						const puzzlePiece = document.createElement("CANVAS");
-						puzzlePiece.setAttribute("data-piece-column", j);
-						puzzlePiece.setAttribute("data-piece-row", i);
-						puzzlePiece.width = puzzleImageCanvas.width / column;
-						puzzlePiece.height = puzzleImageCanvas.height / row;
-						puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzlePiece.width, puzzlePiece.height);
-						puzzlePieceArea.appendChild(puzzlePiece);
-						const puzzlePieceClone = cloneCanvasElement(puzzlePiece);
-						puzzlePieceClone.classList.add("hidden");
-						puzzlePieceClone.setAttribute("data-piece-column", j);
-						puzzlePieceClone.setAttribute("data-piece-row", i);
-						pieceArray.push(puzzlePieceClone);
-					}
+		pieceSelectArea.classList.add("piece_select_area_slide_in");
+		pieceSelectArea.classList.remove("hidden");
+		pieceSelectArea.addEventListener("animationend", () => {
+			document.getElementById("main_menu").classList.add("hidden");
+			pieceSelectArea.classList.remove("piece_select_area_slide_in");
+			//画像の分割
+			const puzzleImageCanvas = document.getElementById("puzzle_divide_canvas");
+			const column = document.getElementById("puzzle_column_division").value;
+			const row = document.getElementById("puzzle_row_division").value;	
+			const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+			const pieceArray = [];
+			let puzzlePieceFadeOutCount = 0;
+			let puzzlePieceFadeInCount = 0;
+			puzzlePieceArea.style.width = puzzleImageCanvas.width + "px";
+			puzzlePieceArea.style.height = puzzleImageCanvas.height + "px";
+			puzzlePieceArea.style.gridTemplateColumns = "repeat(" + column + ", 1fr)";
+			puzzlePieceArea.style.gridTemplateRows = "repeat(" + row + ", 1fr)";
+			for(let i = 0; i < row; i++) {
+				for(let j = 0; j < column; j++) {
+					const puzzlePiece = document.createElement("CANVAS");
+					puzzlePiece.setAttribute("data-piece-column", j);
+					puzzlePiece.setAttribute("data-piece-row", i);
+					puzzlePiece.width = puzzleImageCanvas.width / column;
+					puzzlePiece.height = puzzleImageCanvas.height / row;
+					puzzlePiece.getContext("2d").drawImage(puzzleImage, puzzleImage.naturalWidth / column * j, puzzleImage.naturalHeight / row * i, puzzleImage.naturalWidth / column, puzzleImage.naturalHeight / row, 0, 0, puzzlePiece.width, puzzlePiece.height);
+					puzzlePieceArea.appendChild(puzzlePiece);
+					const puzzlePieceClone = cloneCanvasElement(puzzlePiece);
+					puzzlePieceClone.classList.add("hidden");
+					puzzlePieceClone.setAttribute("data-piece-column", j);
+					puzzlePieceClone.setAttribute("data-piece-row", i);
+					pieceArray.push(puzzlePieceClone);
 				}
-				
-				//ピースの並び替え
-				const randomPieceArray = [];
-				while(pieceArray.length > 0) {
-					const target = Math.floor(Math.random() * pieceArray.length);
-					randomPieceArray.push(pieceArray[target]);
-					pieceArray.splice(target, 1);
-				}
-				randomPieceArray.forEach((piece) => pieceSelectArea.appendChild(piece));
-
-				//ピース消滅アニメーション
-				document.getElementById("puzzle_image").classList.add("hidden");
-				const puzzlePieceFadeOutInterval = setInterval(() => {
-					puzzlePieceArea.children.item(puzzlePieceFadeOutCount).classList.add("puzzle_piece_fade_out");
-					puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
-					if(puzzlePieceFadeOutCount < column * row - 1) puzzlePieceFadeOutCount++;
-					else {
-						puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", () => {
-							while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
-							setTimeout(() => {
-								//ピース出現アニメーション
-								pieceSelectArea.style.paddingBottom = puzzleImageCanvas.height / row / 2 + 10 + "px";
-								const puzzlePieceFadeInInterval = setInterval(() => {
-									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
-									pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
-									pieceSelectArea.children.item(puzzlePieceFadeInCount).addEventListener("animationend", (event) => event.target.classList.remove("puzzle_piece_fade_in"), { once: true });
-									pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
-									if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
-									else {
-										pieceSelectArea.style.paddingBottom = "0px";
+			}
+			//ピースの並び替え
+			const randomPieceArray = [];
+			while(pieceArray.length > 0) {
+				const target = Math.floor(Math.random() * pieceArray.length);
+				randomPieceArray.push(pieceArray[target]);
+				pieceArray.splice(target, 1);
+			}
+			randomPieceArray.forEach((piece) => pieceSelectArea.appendChild(piece));
+			//ピース消滅アニメーション
+			document.getElementById("puzzle_image").classList.add("hidden");
+			const puzzlePieceFadeOutInterval = setInterval(() => {
+				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).classList.add("puzzle_piece_fade_out");
+				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
+				if(puzzlePieceFadeOutCount < column * row - 1) puzzlePieceFadeOutCount++;
+				else {
+					puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", () => {
+						while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
+						setTimeout(() => {
+							//ピース出現アニメーション
+							pieceSelectArea.style.paddingBottom = puzzleImageCanvas.height / row / 2 + 10 + "px";
+							const puzzlePieceFadeInInterval = setInterval(() => {
+								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
+								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
+								pieceSelectArea.children.item(puzzlePieceFadeInCount).addEventListener("animationend", (event) => event.target.classList.remove("puzzle_piece_fade_in"), { once: true });
+								pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
+								if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
+								else {
+									pieceSelectArea.style.paddingBottom = "0px";
+									setTimeout(() => {
+										pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
 										setTimeout(() => {
-											pieceSelectArea.scrollTo({ top: 0, left: 0, behavior: "smooth"});
-											setTimeout(() => {
-												const popupDisplay = document.getElementById("popup_display_text");
-												popupDisplay.innerText = "START";
-												popupDisplay.classList.add("popup_display_animation");
-												popupDisplay.addEventListener("animationend", () => {
-													popupDisplay.innerText = "";
-													popupDisplay.classList.remove("popup_display_animation");
-													document.getElementById("game_timer_area").classList.remove("hidden");
-													document.getElementById("piece_moving_area").classList.remove("hidden");
-													randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
-													puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
-													gameTimer.startTimer();
-												});
-											}, 1000);
+											const popupDisplay = document.getElementById("popup_display_text");
+											popupDisplay.innerText = "START";
+											popupDisplay.classList.add("popup_display_animation");
+											popupDisplay.addEventListener("animationend", () => {
+												popupDisplay.innerText = "";
+												popupDisplay.classList.remove("popup_display_animation");
+												document.getElementById("game_timer_area").classList.remove("hidden");
+												document.getElementById("piece_moving_area").classList.remove("hidden");
+												randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
+												puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
+												gameTimer.startTimer();
+											}, { once: true });
 										}, 1000);
-										clearInterval(puzzlePieceFadeInInterval);
-									}
-								}, 3000 / (column * row));
-							}, 1000);
-						}, { once: true });
-						clearInterval(puzzlePieceFadeOutInterval);
-					}
-				}, 3000 / (column * row));
-			}, { once: true });
-		});
+									}, 1000);
+									clearInterval(puzzlePieceFadeInInterval);
+								}
+							}, 3000 / (column * row));
+						}, 1000);
+					}, { once: true });
+					clearInterval(puzzlePieceFadeOutInterval);
+				}
+			}, 3000 / (column * row));
+		}, { once: true });
 	}
 }
 
@@ -316,8 +315,10 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 			case "puzzle_piece_area":
 				if(targetPlaceElement) {
 					if(selectedPiece.style.gridColumn == targetPlaceElement.style.gridColumn && selectedPiece.style.gridRow == targetPlaceElement.style.gridRow) {
-						Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row")).classList.remove("piece_used");
-						targetPlaceElement.remove();
+						const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
+						const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
+						pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
+						targetPlaceElement.remove();	
 					}
 					else {
 						const selectedPieceColumn = selectedPiece.style.gridColumn;
@@ -398,17 +399,18 @@ function completeCheck() {
 			puzzleDivideCanvas.classList.remove("puzzle_frame");		
 			document.getElementById("puzzle_image").classList.remove("hidden");
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
-			fadeOutElement(puzzleDivideCanvas, 1.5);
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.add("hidden");
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
-			});
-			popupDisplay.innerText = "PUZZLE COMPLETE!";
-			popupDisplay.classList.add("popup_display_animation");
-			popupDisplay.addEventListener("animationend", () => {
-				popupDisplay.classList.remove("popup_display_animation");
-				popupDisplay.innerText = "";
+			}, { once: true });
+			fadeOutElement(puzzleDivideCanvas, 1.5, () => {
+				popupDisplay.innerText = "PUZZLE COMPLETE!";
+				popupDisplay.classList.add("popup_display_animation");
+				popupDisplay.addEventListener("animationend", () => {
+					popupDisplay.classList.remove("popup_display_animation");
+					popupDisplay.innerText = "";
+				}, { once: true });	
 			});
 		}
 	}

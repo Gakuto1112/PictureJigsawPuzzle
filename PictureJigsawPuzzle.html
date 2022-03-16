@@ -8,13 +8,13 @@
 	</head>
 	<body class="background_blue">
 		<div id="header" class="header_blue">
-			<h1>ピクチャージグソーパズル<span id="game_timer_area" class="hidden"> - <span id="game_timer_minute">0</span>:<span id="game_timer_second">00</span></span></h1>
+			<h1>ピクチャージグソーパズル<span id="game_timer_area" class="hidden"> - <span name="game_timer_minute">0</span>:<span name="game_timer_second">00</span></span></h1>
 		</div>
 		<div id="main_area">
 			<p id="message_canvas_not_available">お使いのブラウザはキャンバス描画に対応していないため、ピクチャージグソーパズルを利用出来ません。</p>
 			<div id="puzzle_area" class="puzzle_area_image_select puzzle_frame" onclick="selectImage(this)">
 				<div id="puzzle_background"></div>
-				<p id="puzzle_empty_text">クリックして画像の選択</p>
+				<p id="puzzle_empty_text">クリックして画像を選択</p>
 				<img id="puzzle_image">
 				<div id="puzzle_piece_area"></div>
 				<canvas id="puzzle_divide_canvas"></canvas>
@@ -27,7 +27,7 @@
 						<label for="puzzle_row_division">横のピース数</label>
 						<input id="puzzle_row_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
 					</div>
-					<p id="puzzle_piece_count">パズルピースの総数：<span id="piece_count">25</span>枚</p>
+					<p id="puzzle_piece_count">パズルピースの総数：<span name="piece_count">25</span>ピース</p>
 					<div id="start" class="button button_blue button_disabled" onclick="start(this);">スタート</div>
 					<ul id="cannot_start_message">
 						<li>画像を選択して下さい。</li>
@@ -35,6 +35,16 @@
 						<li class="red_color hidden">縦のピース数が不正です。</li>
 						<li class="red_color hidden">横のピース数が不正です。</li>
 					</ul>		
+				</div>
+				<div id="pause_menu" class="hidden">
+					<div class="button button_green">再開</div>
+					<div class="button button_space button_green">元の画像を確認</div>
+					<div class="button button_space button_green">メインメニューに戻る</div>
+				</div>
+				<div id="end_menu" class="hidden">
+					<h1><span name="piece_count">25</span>ピースのパズルを<span name="game_timer_minute">0</span>:<span name="game_timer_second">00</span>で完成させました！</h1>
+					<div class="button button_green">もう一度プレイ</div>
+					<div class="button button_space button_green">Twitterに投稿</div>
 				</div>
 			</div>
 		</div>
