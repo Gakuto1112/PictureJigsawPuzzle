@@ -47,7 +47,7 @@ class AudioPlayer {
 	}
 }
 
-const music = new AudioPlayer({ "1": new Audio("Music/1.mp3"), "2": new Audio("Music/2.mp3"), "3": new Audio("Music/3.mp3")}, document.getElementsByClassName("music_volume")[0].value);
+const music = new AudioPlayer({ "main": new Audio("Music/" + Math.floor(Math.random() * 3 + 1).toString() + ".mp3") }, document.getElementsByClassName("music_volume")[0].value);
 const sound = new AudioPlayer({ buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") }, document.getElementsByClassName("sound_volume")[0].value); //サウンドを保持する変数
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
@@ -550,7 +550,7 @@ function newGame() {
 function playMusic(element) {
 	music.setVolume(element.value);
 	if(!musicFlag) {
-		music.playLoop(Math.floor(Math.random() * 3 + 1).toString());
+		music.playLoop("main");
 		musicFlag = true;
 	}
 	

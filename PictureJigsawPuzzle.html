@@ -29,9 +29,9 @@
 					</div>
 					<div class="volumes">
 						<img src="Icons/Music.svg" class="icon icon_blue">
-						<input type="range" class="music_volume" min="0" max="1" step="0.1" value="0" oninput="playMusic(this);">
+						<input type="range" class="music_volume" min="0" max="1" step="0.1" value="0" onchange="playMusic(this);">
 						<img src="Icons/Sound.svg" class="icon icon_blue">
-						<input type="range" class="sound_volume" min="0" max="1" step="0.1" value="0" oninput="sound.setVolume(this.value);">
+						<input type="range" class="sound_volume" min="0" max="1" step="0.1" value="0" onchange="sound.setVolume(this.value);">
 					</div>
 					<p id="puzzle_piece_count">パズルピースの総数：<span name="piece_count">25</span>ピース</p>
 					<div id="start" class="button button_blue button_disabled" onclick="start(this);">スタート</div>
@@ -45,9 +45,9 @@
 				<div id="pause_menu" class="hidden">
 					<div class="volumes">
 						<img src="Icons/Music.svg" class="icon icon_green">
-						<input type="range" class="music_volume" min="0" max="1" step="0.1" value="0" oninput="music.setVolume(this.value);">
+						<input type="range" class="music_volume" min="0" max="1" step="0.1" value="0" onchange="music.setVolume(this.value);">
 						<img src="Icons/Sound.svg" class="icon icon_green">
-						<input type="range" class="sound_volume" min="0" max="1" step="0.1" value="0" oninput="sound.setVolume(this.value);">
+						<input type="range" class="sound_volume" min="0" max="1" step="0.1" value="0" onchange="sound.setVolume(this.value);">
 					</div>
 					<div class="button button_green" onclick="pause();">再開</div>
 					<div class="button button_space button_green" onclick="fadeInElement(document.getElementById('image_show_area'), 0.5);">元の画像を確認</div>
