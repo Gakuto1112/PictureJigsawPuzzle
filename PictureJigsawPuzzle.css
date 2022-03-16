@@ -296,7 +296,6 @@ label[for="puzzle_row_division"] {
 }
 #piece_select_area > canvas {
 	height: max-content;
-	max-height: calc(100% - 40px);
 	margin: 10px;
 }
 .piece_selecting {
