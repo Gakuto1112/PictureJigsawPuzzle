@@ -322,11 +322,16 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 					else {
 						const selectedPieceColumn = selectedPiece.style.gridColumn;
 						const selectedPieceRow = selectedPiece.style.gridRow;
+						const selectedPieceRect = selectedPiece.getBoundingClientRect();
+						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, (piece) => piece.classList.remove("hidden"));
+						pieceMovingAnimation(targetPlaceElement, "hidden", selectedPieceRect.left + window.scrollX, selectedPieceRect.top + window.scrollY, 0.3, (piece) => {
+							piece.classList.remove("hidden");
+							completeCheck();
+						});
 						selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
 						selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
 						targetPlaceElement.style.gridColumn = selectedPieceColumn;
 						targetPlaceElement.style.gridRow = selectedPieceRow;
-						completeCheck();
 					}
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
@@ -372,7 +377,7 @@ function pieceMovingAnimation(pieceToMove, classAddedOriginalPiece, destinationX
 	clonedPiece.style.transform = "translate(" + (destinationX - clientRect.left - window.scrollX) + "px, " + (destinationY - clientRect.top - window.scrollY) + "px)";
 	clonedPiece.addEventListener("transitionend", () => {
 		clonedPiece.remove();
-		if(typeof callback == "function") callback(); 
+		if(typeof callback == "function") callback(pieceToMove); 
 	}, { once: true });
 }
 
