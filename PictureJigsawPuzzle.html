@@ -19,20 +19,24 @@
 				<div id="puzzle_piece_area"></div>
 				<canvas id="puzzle_divide_canvas"></canvas>
 			</div>
-			<div id="puzzle_division_settings">
-				<label for="puzzle_column_division">縦のピース数</label>
-				<input id="puzzle_column_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
-				<label for="puzzle_row_division">横のピース数</label>
-				<input id="puzzle_row_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
+			<div id="menus">
+				<div id="main_menu">
+					<div id="puzzle_division_settings">
+						<label for="puzzle_column_division">縦のピース数</label>
+						<input id="puzzle_column_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
+						<label for="puzzle_row_division">横のピース数</label>
+						<input id="puzzle_row_division" type="number" min="1" value="5" onchange="divisionInputCheck();">
+					</div>
+					<p id="puzzle_piece_count">パズルピースの総数：<span id="piece_count">25</span>枚</p>
+					<div id="start" class="button button_blue button_disabled" onclick="start(this);">スタート</div>
+					<ul id="cannot_start_message">
+						<li>画像を選択して下さい。</li>
+						<li class="red_color hidden">ピースの数が少な過ぎます。</li>
+						<li class="red_color hidden">縦のピース数が不正です。</li>
+						<li class="red_color hidden">横のピース数が不正です。</li>
+					</ul>		
+				</div>
 			</div>
-			<p id="puzzle_piece_count">パズルピースの総数：<span id="piece_count">25</span>枚</p>
-			<div id="start" class="button button_blue button_disabled" onclick="start(this);">スタート</div>
-			<ul id="cannot_start_message">
-				<li>画像を選択して下さい。</li>
-				<li class="red_color hidden">ピースの数が少な過ぎます。</li>
-				<li class="red_color hidden">縦のピース数が不正です。</li>
-				<li class="red_color hidden">横のピース数が不正です。</li>
-			</ul>
 		</div>
 		<div id="popup_display">
 			<p id="popup_display_text"></p>

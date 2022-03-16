@@ -30,6 +30,14 @@ input[type="number"] {
 .hidden {
 	display: none !important;
 }
+.fade_out {
+	animation-name: fade-out;
+}
+@keyframes fade-out {
+	100% {
+		opacity: 0;
+	}
+}
 .fade_in {
 	animation-name: fade-in;
 }
@@ -158,6 +166,11 @@ input[type="number"] {
 }
 #puzzle_divide_canvas {
 	pointer-events: none;
+}
+#menus > div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 #puzzle_division_settings {
 	margin-top: 50px;

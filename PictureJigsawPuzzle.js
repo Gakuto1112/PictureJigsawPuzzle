@@ -60,24 +60,25 @@ function swapClass(element, classOut, classIn) {
 	element.classList.add(classIn);
 }
 
-function fadeInElement(element, transition, callback) {
+function fadeInElement(element, duration, callback) {
 	//要素をフェードインさせる。トランジションは秒。
-	element.style.animationDuration = transition + "s";
+	element.style.animationDuration = duration + "s";
 	element.classList.add("fade_in");
 	element.classList.remove("hidden");
 	element.addEventListener("animationend", () => {
+		element.style.animationDuration = "";
 		element.classList.remove("fade_in");
 		if(typeof callback == "function") callback();
 	}, { once: true });
 }
 
-function fadeOutElement(element, transition, callback) {
+function fadeOutElement(element, duration, callback) {
 	//要素をフェードアウトさせる。トランジションは秒。
-	element.style.transition = "opacity " + transition + "s";
-	element.style.opacity = 0;
-	element.addEventListener("transitionend", () => {
-		element.style.transition = "";
-		element.style.opacity = 1;
+	element.style.animationDuration = duration + "s";
+	element.classList.add("fade_out");
+	element.addEventListener("animationend", () => {
+		element.style.animationDuration = "";
+		element.classList.remove("fade_out");
 		element.classList.add("hidden");
 		if(typeof callback == "function") callback();
 	}, { once: true });
@@ -193,10 +194,7 @@ function start(clickElement) {
 		document.getElementById("puzzle_area").classList.remove("puzzle_area_image_select");
 		swapClass(document.body, "background_blue", "background_green");
 		swapClass(document.getElementById("header"), "header_blue", "header_green");
-		fadeOutElement(document.getElementById("puzzle_division_settings"), 1.5);
-		fadeOutElement(document.getElementById("puzzle_piece_count"), 1.5);
-		fadeOutElement(document.getElementById("cannot_start_message"), 1.5);
-		fadeOutElement(clickElement, 1.5, () => {
+		fadeOutElement(document.getElementById("main_menu"), 1.5, () => {
 			const pieceSelectArea = document.getElementById("piece_select_area");
 			pieceSelectArea.classList.add("piece_select_area_slide_in");
 			pieceSelectArea.classList.remove("hidden");
