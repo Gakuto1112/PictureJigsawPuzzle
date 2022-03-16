@@ -280,3 +280,13 @@ label[for="puzzle_row_division"] {
 .piece_used {
 	opacity: 0.25;
 }
+#piece_moving_area {
+	position: absolute;
+	width: 100%;
+	height: calc(100% - 60px);
+	top: 60px;
+	pointer-events: none;
+}
+#piece_moving_area > canvas {
+	position: absolute;
+}

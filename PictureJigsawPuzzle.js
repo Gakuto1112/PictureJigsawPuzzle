@@ -268,6 +268,7 @@ function start(clickElement) {
 													popupDisplay.innerText = "";
 													popupDisplay.classList.remove("popup_display_animation");
 													document.getElementById("game_timer_area").classList.remove("hidden");
+													document.getElementById("piece_moving_area").classList.remove("hidden");
 													randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
 													puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
 													gameTimer.startTimer();
@@ -303,9 +304,12 @@ function pieceClick(pieceElement) {
 function puzzlePieceAreaClick(offsetX, offsetY) {
 	//ピースエリアをクリックしたときの処理
 	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
+	const puzzlePieceAreaRect = puzzlePieceArea.getBoundingClientRect();
 	const pieceSelectArea = document.getElementById("piece_select_area");
-	const clickColumn = Math.floor(offsetX / (/\d+/.exec(puzzlePieceArea.style.width) / /\d+/.exec(puzzlePieceArea.style.gridTemplateColumns)));
-	const clickRow = Math.floor(offsetY / (/\d+/.exec(puzzlePieceArea.style.height) / /\d+/.exec(puzzlePieceArea.style.gridTemplateRows)));
+	const pieceWidth = Number(/\d+/.exec(puzzlePieceArea.style.width)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateColumns));
+	const pieceHeight = Number(/\d+/.exec(puzzlePieceArea.style.height)) / Number(/\d+/.exec(puzzlePieceArea.style.gridTemplateRows));
+	const clickColumn = Math.floor(offsetX / pieceWidth);
+	const clickRow = Math.floor(offsetY / pieceHeight);
 	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
 	if(selectedPiece) {
 		switch(selectedPiece.parentElement.id) {
@@ -342,10 +346,11 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 				const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
 				clonedPiece.style.gridColumn = clickColumn + 1;
 				clonedPiece.style.gridRow = clickRow + 1;
-				puzzlePieceArea.appendChild(clonedPiece);
-				if(!targetPlaceElement) completeCheck();
+				pieceMovingAnimation(selectedPiece, "piece_used", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, () => {
+					puzzlePieceArea.appendChild(clonedPiece);
+					if(!targetPlaceElement) completeCheck();
+				});
 				selectedPiece.classList.remove("piece_selecting");
-				selectedPiece.classList.add("piece_used");
 				selectedPiece = null;
 				break;
 		}
@@ -354,6 +359,21 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 		selectedPiece = targetPlaceElement;
 		selectedPiece.classList.add("piece_selecting");
 	}
+}
+
+function pieceMovingAnimation(pieceToMove, classAddedOriginalPiece, destinationX, destinationY, duration, callback) {
+	const clientRect = pieceToMove.getBoundingClientRect();
+	const clonedPiece = cloneCanvasElement(pieceToMove);
+	clonedPiece.style.top = clientRect.top + window.scrollY - 60 + "px";
+	clonedPiece.style.left = clientRect.left + window.scrollX + "px";
+	pieceToMove.classList.add(classAddedOriginalPiece);
+	document.getElementById("piece_moving_area").appendChild(clonedPiece);
+	clonedPiece.style.transition = duration + "s ease";
+	clonedPiece.style.transform = "translate(" + (destinationX - clientRect.left - window.scrollX) + "px, " + (destinationY - clientRect.top - window.scrollY) + "px)";
+	clonedPiece.addEventListener("transitionend", () => {
+		clonedPiece.remove();
+		if(typeof callback == "function") callback(); 
+	}, { once: true });
 }
 
 function completeCheck() {
