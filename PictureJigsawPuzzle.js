@@ -311,7 +311,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 	const clickColumn = Math.floor(offsetX / pieceWidth);
 	const clickRow = Math.floor(offsetY / pieceHeight);
 	const targetPlaceElement = Array.prototype.slice.call(puzzlePieceArea.children).find((piece) => Number(/\d+/.exec(piece.style.gridColumn)) - 1 == clickColumn && Number(/\d+/.exec(piece.style.gridRow)) - 1 == clickRow);
-	if(selectedPiece) {
+	if(selectedPiece && !document.getElementById("piece_moving_area").firstElementChild) {
 		switch(selectedPiece.parentElement.id) {
 			case "puzzle_piece_area":
 				if(targetPlaceElement) {
@@ -323,8 +323,8 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 						const selectedPieceColumn = selectedPiece.style.gridColumn;
 						const selectedPieceRow = selectedPiece.style.gridRow;
 						const selectedPieceRect = selectedPiece.getBoundingClientRect();
-						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, (piece) => piece.classList.remove("hidden"));
-						pieceMovingAnimation(targetPlaceElement, "hidden", selectedPieceRect.left + window.scrollX, selectedPieceRect.top + window.scrollY, 0.3, (piece) => {
+						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
+						pieceMovingAnimation(targetPlaceElement, "hidden", selectedPieceRect.left + window.scrollX, selectedPieceRect.top + window.scrollY, 0.3, false, (piece) => {
 							piece.classList.remove("hidden");
 							completeCheck();
 						});
@@ -337,6 +337,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 					selectedPiece = null;
 				}
 				else {
+					pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
 					selectedPiece.style.gridColumn = clickColumn + 1;
 					selectedPiece.style.gridRow = clickRow + 1;
 					selectedPiece.classList.remove("piece_selecting");
@@ -345,13 +346,15 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 				break;
 			case "piece_select_area":
 				if(targetPlaceElement) {
-					Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row")).classList.remove("piece_used");
+					const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
+					const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
+					pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
 					targetPlaceElement.remove();
 				}
 				const clonedPiece = cloneCanvasElement(selectedPiece, { "data-piece-column": selectedPiece.getAttribute("data-piece-column"), "data-piece-row": selectedPiece.getAttribute("data-piece-row") });
 				clonedPiece.style.gridColumn = clickColumn + 1;
 				clonedPiece.style.gridRow = clickRow + 1;
-				pieceMovingAnimation(selectedPiece, "piece_used", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, () => {
+				pieceMovingAnimation(selectedPiece, "piece_used", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, () => {
 					puzzlePieceArea.appendChild(clonedPiece);
 					if(!targetPlaceElement) completeCheck();
 				});
@@ -366,15 +369,16 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 	}
 }
 
-function pieceMovingAnimation(pieceToMove, classAddedOriginalPiece, destinationX, destinationY, duration, callback) {
+function pieceMovingAnimation(pieceToMove, classAddedOriginalPiece, destinationX, destinationY, duration, fadeOut, callback) {
 	const clientRect = pieceToMove.getBoundingClientRect();
 	const clonedPiece = cloneCanvasElement(pieceToMove);
-	clonedPiece.style.top = clientRect.top + window.scrollY - 60 + "px";
-	clonedPiece.style.left = clientRect.left + window.scrollX + "px";
-	pieceToMove.classList.add(classAddedOriginalPiece);
+	clonedPiece.style.top = clientRect.top + "px";
+	clonedPiece.style.left = clientRect.left + "px";
+	if(classAddedOriginalPiece) pieceToMove.classList.add(classAddedOriginalPiece);
 	document.getElementById("piece_moving_area").appendChild(clonedPiece);
 	clonedPiece.style.transition = duration + "s ease";
 	clonedPiece.style.transform = "translate(" + (destinationX - clientRect.left - window.scrollX) + "px, " + (destinationY - clientRect.top - window.scrollY) + "px)";
+	if(fadeOut) clonedPiece.style.opacity = 0;
 	clonedPiece.addEventListener("transitionend", () => {
 		clonedPiece.remove();
 		if(typeof callback == "function") callback(pieceToMove); 

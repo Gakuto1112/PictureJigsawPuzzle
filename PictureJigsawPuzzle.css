@@ -166,6 +166,7 @@ input[type="number"] {
 }
 #puzzle_divide_canvas {
 	pointer-events: none;
+	z-index: 1;
 }
 #menus > div {
 	display: flex;
@@ -184,6 +185,7 @@ label[for="puzzle_row_division"] {
 	left: 50%;
 	width: 100%;
 	transform: translate(-50%, -50%);
+	z-index: 1;
 }
 #popup_display_text {
 	display: block;
@@ -281,10 +283,12 @@ label[for="puzzle_row_division"] {
 	opacity: 0.25;
 }
 #piece_moving_area {
-	position: absolute;
+	position: fixed;
 	width: 100%;
-	height: calc(100% - 60px);
-	top: 60px;
+	height: 100%;
+	top: 0;
+	left: 0;
+	overflow: hidden;
 	pointer-events: none;
 }
 #piece_moving_area > canvas {
