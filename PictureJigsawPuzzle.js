@@ -20,6 +20,7 @@ class GameTimer {
 	}
 }
 
+const sounds = { buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") } //サウンドを保持する変数
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
@@ -204,6 +205,7 @@ function start(clickElement) {
 		swapClass(document.getElementById("header"), "header_blue", "header_green");
 		pieceSelectArea.classList.add("piece_select_area_slide_in");
 		pieceSelectArea.classList.remove("hidden");
+		playSound("startPush");
 		pieceSelectArea.addEventListener("animationend", () => {
 			document.getElementById("main_menu").classList.add("hidden");
 			pieceSelectArea.classList.remove("piece_select_area_slide_in");
@@ -247,6 +249,7 @@ function start(clickElement) {
 			document.getElementById("puzzle_image").classList.add("hidden");
 			const puzzlePieceFadeOutInterval = setInterval(() => {
 				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).classList.add("puzzle_piece_fade_out");
+				playSound("pieceAnimation");
 				puzzlePieceArea.children.item(puzzlePieceFadeOutCount).addEventListener("animationend", (event) => event.target.style.opacity = 0, { once: true });
 				if(puzzlePieceFadeOutCount < column * row - 1) puzzlePieceFadeOutCount++;
 				else {
@@ -258,6 +261,7 @@ function start(clickElement) {
 							const puzzlePieceFadeInInterval = setInterval(() => {
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.add("puzzle_piece_fade_in");
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).classList.remove("hidden");
+								playSound("pieceAnimation");
 								pieceSelectArea.children.item(puzzlePieceFadeInCount).addEventListener("animationend", (event) => event.target.classList.remove("puzzle_piece_fade_in"), { once: true });
 								pieceSelectArea.scrollTo({ top: Math.floor(pieceSelectArea.scrollHeight / (puzzleImageCanvas.height / row + 20) - 1) * (puzzleImageCanvas.height / row + 20), left: 0 });
 								if(puzzlePieceFadeInCount < column * row -1) puzzlePieceFadeInCount++;
@@ -269,6 +273,7 @@ function start(clickElement) {
 											const popupDisplay = document.getElementById("popup_display_text");
 											popupDisplay.innerText = "START";
 											popupDisplay.classList.add("popup_display_animation");
+											setTimeout(() => playSound("startSound"), 900);
 											popupDisplay.addEventListener("animationend", () => {
 												popupDisplay.innerText = "";
 												popupDisplay.classList.remove("popup_display_animation");
@@ -298,11 +303,13 @@ function start(clickElement) {
 function pieceClick(pieceElement) {
 	//ピースをクリックしたときの処理
 	if(pieceElement == selectedPiece) {
+		playSound("pieceSelect");
 		selectedPiece.classList.remove("piece_selecting");
 		selectedPiece = null;
 	}
 	else if(!pieceElement.classList.contains("piece_used")) {
 		if(selectedPiece) selectedPiece.classList.remove("piece_selecting");
+		playSound("pieceSelect");
 		selectedPiece = pieceElement;
 		selectedPiece.classList.add("piece_selecting");
 	}
@@ -327,6 +334,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 							const pieceInSelectArea = Array.prototype.slice.call(pieceSelectArea.children).find((piece) => piece.getAttribute("data-piece-column") == targetPlaceElement.getAttribute("data-piece-column") && piece.getAttribute("data-piece-row") == targetPlaceElement.getAttribute("data-piece-row"));
 							const pieceInSelectAreaRect = pieceInSelectArea.getBoundingClientRect();
 							pieceMovingAnimation(targetPlaceElement, null, pieceInSelectAreaRect.left + window.scrollX, pieceInSelectAreaRect.top + window.scrollY, 0.3, true, () => pieceInSelectArea.classList.remove("piece_used"));
+							playSound("pieceMove");
 							targetPlaceElement.remove();	
 						}
 						else {
@@ -338,6 +346,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 								piece.classList.remove("hidden");
 								completeCheck();
 							});
+							playSound("pieceMove");
 							selectedPiece.style.gridColumn = targetPlaceElement.style.gridColumn;
 							selectedPiece.style.gridRow = targetPlaceElement.style.gridRow;
 							targetPlaceElement.style.gridColumn = selectedPieceColumn;
@@ -348,6 +357,7 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 					}
 					else {
 						pieceMovingAnimation(selectedPiece, "hidden", puzzlePieceAreaRect.left + window.scrollX + pieceWidth * clickColumn, puzzlePieceAreaRect.top + window.scrollY + pieceHeight * clickRow, 0.3, false, (piece) => piece.classList.remove("hidden"));
+						playSound("pieceMove");
 						selectedPiece.style.gridColumn = clickColumn + 1;
 						selectedPiece.style.gridRow = clickRow + 1;
 						selectedPiece.classList.remove("piece_selecting");
@@ -368,12 +378,14 @@ function puzzlePieceAreaClick(offsetX, offsetY) {
 						puzzlePieceArea.appendChild(clonedPiece);
 						if(!targetPlaceElement) completeCheck();
 					});
+					playSound("pieceMove");
 					selectedPiece.classList.remove("piece_selecting");
 					selectedPiece = null;
 					break;
 			}
 		}
 		else if(targetPlaceElement) {
+			playSound("pieceSelect");
 			selectedPiece = targetPlaceElement;
 			selectedPiece.classList.add("piece_selecting");
 		}
@@ -412,6 +424,7 @@ function completeCheck() {
 			fadeOutElement(document.getElementById("pause_button"), 0.3);
 			while(puzzlePieceArea.firstElementChild) puzzlePieceArea.firstElementChild.remove();
 			pieceSelectArea.classList.add("piece_select_area_slide_out");
+			playSound("puzzleComplete");
 			pieceSelectArea.addEventListener("transitionend", () => {
 				pieceSelectArea.classList.add("hidden");
 				pieceSelectArea.classList.remove("piece_select_area_slide_out");
@@ -450,7 +463,7 @@ function pause() {
 		gameTimer.startTimer();
 		pieceSelectArea.classList.add("piece_select_area_slide_in");
 		pieceSelectArea.classList.remove("hidden");
-		pieceSelectArea.addEventListener("animationend", () => pauseMenu.classList.remove("hidden"), { once: true });
+		pieceSelectArea.addEventListener("animationend", () => pauseMenu.classList.add("hidden"), { once: true });
 	}
 }
 
@@ -493,6 +506,12 @@ function newGame() {
 	}, { once: true });
 }
 
+function playSound(soundName) {
+	//効果音を再生する。
+	const audioTmp = new Audio(sounds[soundName].src);
+	audioTmp.play();
+}
+
 //以下main
 //ブラウザがキャンバス描画に対応している確認
 const canvasForCheck = document.createElement("CANVAS");
@@ -502,3 +521,10 @@ else {
 	document.getElementById("puzzle_division_settings").remove();
 }
 delete canvasForCheck;
+
+Object.keys(sounds).forEach((key) => {
+	sounds[key].load();
+});
+Array.prototype.slice.call(document.getElementsByClassName("button")).forEach((element) => {
+	if(element.id != "start") element.addEventListener("click", () => playSound("buttonPush"));
+});
