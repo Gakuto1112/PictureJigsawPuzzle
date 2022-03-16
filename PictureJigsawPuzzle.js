@@ -23,6 +23,7 @@ class GameTimer {
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
+let puzzlePieceAreaEvent; //puzzle_piece_areaのイベント変数
 
 puzzleImage.addEventListener("load", () => {
 	const puzzleImageElement = document.getElementById("puzzle_image");
@@ -275,7 +276,8 @@ function start(clickElement) {
 												document.getElementById("piece_moving_area").classList.remove("hidden");
 												fadeInElement(document.getElementById("pause_button"), 0.3);
 												randomPieceArray.forEach((piece) => piece.addEventListener("click", () => pieceClick(piece)));
-												puzzlePieceArea.addEventListener("click", (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY));
+												puzzlePieceAreaEvent = (event) => puzzlePieceAreaClick(event.offsetX, event.offsetY);
+												puzzlePieceArea.addEventListener("click", puzzlePieceAreaEvent);
 												gameTimer = new GameTimer();
 												gameTimer.startTimer();
 											}, { once: true });
@@ -403,6 +405,7 @@ function completeCheck() {
 			const popupDisplay = document.getElementById("popup_display_text");
 			const pieceSelectArea = document.getElementById("piece_select_area");
 			gameTimer.stopTimer();
+			puzzlePieceArea.removeEventListener("click", puzzlePieceAreaEvent);
 			document.getElementById("puzzle_image").classList.add("puzzle_frame");
 			puzzleDivideCanvas.classList.remove("puzzle_frame");		
 			document.getElementById("puzzle_image").classList.remove("hidden");
@@ -457,6 +460,8 @@ function newGame() {
 	const puzzleDivideCanvas = document.getElementById("puzzle_divide_canvas");
 	const puzzlePieceArea = document.getElementById("puzzle_piece_area");
 	const pieceSelectArea = document.getElementById("piece_select_area");
+	const pauseMenu = document.getElementById("pause_button");		
+	puzzlePieceArea.removeEventListener("click", puzzlePieceAreaEvent);
 	while(pieceSelectArea.firstElementChild) pieceSelectArea.firstElementChild.remove();
 	pieceSelectArea.classList.add("piece_select_area_slide_in");
 	pieceSelectArea.classList.remove("hidden");
@@ -474,7 +479,7 @@ function newGame() {
 		puzzleDivideCanvas.classList.remove("hidden");
 		puzzleImage.classList.remove("puzzle_frame");		
 		puzzleImage.classList.remove("hidden");
-		fadeOutElement(document.getElementById("pause_button"), 0.3);
+		if(!pauseMenu.classList.contains("hidden")) fadeOutElement(pauseMenu, 0.3);
 		swapClass(document.body, "background_green", "background_blue");
 		swapClass(document.getElementById("header"), "header_green", "header_blue");
 		document.body.addEventListener("transitionend", () => {
