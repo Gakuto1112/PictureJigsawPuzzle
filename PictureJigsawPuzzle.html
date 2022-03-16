@@ -42,9 +42,9 @@
 					<div class="button button_space button_green">メインメニューに戻る</div>
 				</div>
 				<div id="end_menu" class="hidden">
-					<h1><span name="piece_count">25</span>ピースのパズルを<span name="game_timer_minute">0</span>:<span name="game_timer_second">00</span>で完成させました！</h1>
+					<h1 id="result_message"><span name="piece_count">25</span>ピースのパズルを<span name="game_timer_minute">0</span>:<span name="game_timer_second">00</span>で完成させました！</h1>
 					<div class="button button_green">もう一度プレイ</div>
-					<div class="button button_space button_green">Twitterに投稿</div>
+					<div class="button button_space button_green" onclick="window.open('https://twitter.com/intent/tweet?text=' + document.getElementById('result_message').innerText + '&url=https://gakuto1112.github.io/PictureJigsawPuzzle/' + '&hashtags=PictureJigsawPuzzle', '_blank')">Twitterに投稿</div>
 				</div>
 			</div>
 		</div>

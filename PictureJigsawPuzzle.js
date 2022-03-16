@@ -8,7 +8,7 @@ class GameTimer {
 		this.gameTimerInterval = setInterval(() => {
 			this.gameTimeCount++;
 			document.getElementsByName("game_timer_minute").forEach((element) => element.innerText = Math.floor(this.gameTimeCount / 60));
-			document.getElementsByName("game_timer_minute").forEach((element) => element.innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2));
+			document.getElementsByName("game_timer_second").forEach((element) => element.innerText = ("0" + Math.floor(this.gameTimeCount % 60)).slice(-2));
 		}, 1000);
 	}
 
@@ -410,6 +410,7 @@ function completeCheck() {
 				popupDisplay.addEventListener("animationend", () => {
 					popupDisplay.classList.remove("popup_display_animation");
 					popupDisplay.innerText = "";
+					document.getElementById("end_menu").classList.remove("hidden");
 				}, { once: true });	
 			});
 		}
