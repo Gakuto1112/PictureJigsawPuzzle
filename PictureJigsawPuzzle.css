@@ -96,7 +96,7 @@ input[type="number"] {
 	user-select: none;
 }
 .button:active {
-	transform: scale(95%);
+	transform: scale(0.95);
 }
 .button_disabled {
 	background-color: darkgray !important;
@@ -174,11 +174,11 @@ input[type="number"] {
 }
 @keyframes puzzle-piece-fade-in {
 	0% {
-		transform: scale(150%);
+		transform: scale(1.5);
 		opacity: 0;
 	}
 	100% {
-		transform: scale(100%);
+		transform: scale(1);
 		opacity: 1;
 	}
 }
@@ -187,7 +187,7 @@ input[type="number"] {
 }
 @keyframes puzzle-piece-fade-out {
 	100% {
-		transform: scale(150%);
+		transform: scale(1.5);
 		opacity: 0;
 	}
 }
@@ -237,7 +237,7 @@ label[for="puzzle_row_division"] {
 	width: 300%;
 	height: 80px;
 	margin: 0;
-	transform: translate(-50%, -50%) scaleY(0%);
+	transform: translate(-50%, -50%) scaleY(0);
 	transform-origin: top left;
 	text-align: center;
 	line-height: 80px;
@@ -254,25 +254,25 @@ label[for="puzzle_row_division"] {
 }
 @keyframes popup-display-animation {
 	0% {
-		transform: scaleY(0%) translate(-17%, -50%);
+		transform: scaleY(0) translate(-17%, -50%);
 		opacity: 0;
 	}
 	10% {
-		transform: scaleY(100%) translate(-17%, -50%);
+		transform: scaleY(1) translate(-17%, -50%);
 		opacity: 1;
 	}
 	30% {
-		transform: scale(100%) translate(-50%, -50%);
+		transform: scale(1) translate(-50%, -50%);
 	}
 	70% {
-		transform: scale(100%) translate(-50%, -50%);
+		transform: scale(1) translate(-50%, -50%);
 	}
 	90% {
-		transform: scaleY(100%) translate(-83%, -50%);
+		transform: scaleY(1) translate(-83%, -50%);
 		opacity: 1;
 	}
 	100% {
-		transform: scaleY(0%) translate(-83%, -50%);
+		transform: scaleY(0) translate(-83%, -50%);
 		opacity: 0;
 	}
 }
