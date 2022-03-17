@@ -47,8 +47,8 @@ class AudioPlayer {
 	}
 }
 
-const music = new AudioPlayer({ "main": new Audio("Music/" + Math.floor(Math.random() * 3 + 1).toString() + ".mp3") }, document.getElementsByClassName("music_volume")[0].value);
-const sound = new AudioPlayer({ buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") }, document.getElementsByClassName("sound_volume")[0].value); //サウンドを保持する変数
+let music; //BGMを保持する変数
+let sound; //効果音を保持する変数
 const puzzleImage = new Image(); //パズルに使用する画像を保持する。
 let gameTimer; //ゲームタイマー
 let selectedPiece; //選択したパズルピース
@@ -136,7 +136,7 @@ function selectImage(clickElement) {
 		fileInput.type = "file";
 		fileInput.accept = "image/*";
 		fileInput.addEventListener("change", (event) => {
-			const acceptFileType = ["png", "jpg", "jpeg"];
+			const acceptFileType = ["png", "jpg", "jpeg", "gif"];
 			if(acceptFileType.indexOf(fileInput.value.split(".").slice(-1)[0].toLowerCase()) >= 0) {
 				//ファイルの形式が正しい場合の処理
 				const reader = new FileReader();
@@ -559,10 +559,14 @@ function playMusic(element) {
 //以下main
 //ブラウザがキャンバス描画に対応している確認
 const canvasForCheck = document.createElement("CANVAS");
-if(canvasForCheck.getContext) document.getElementById("message_canvas_not_available").remove();
+if(canvasForCheck.getContext) {
+	document.getElementById("message_canvas_not_available").remove();
+	music = new AudioPlayer({ "main": new Audio("Music/" + Math.floor(Math.random() * 3 + 1).toString() + ".mp3") }, document.getElementsByClassName("music_volume")[0].value);
+	sound = new AudioPlayer({ buttonPush: new Audio("Sounds/ButtonPush.mp3"), startPush: new Audio("Sounds/StartPush.mp3"), pieceAnimation: new Audio("Sounds/PieceAnimation.mp3"), startSound: new Audio("Sounds/StartSound.mp3"), pieceSelect: new Audio("Sounds/PieceSelect.mp3"), pieceMove: new Audio("Sounds/PieceMove.mp3"), puzzleComplete: new Audio("Sounds/PuzzleComplete.mp3") }, document.getElementsByClassName("sound_volume")[0].value);
+}
 else {
 	document.getElementById("puzzle_area").remove();
-	document.getElementById("puzzle_division_settings").remove();
+	document.getElementById("menus").remove();
 }
 delete canvasForCheck;
 Array.prototype.slice.call(document.getElementsByClassName("button")).forEach((element) => {
